@@ -17,8 +17,10 @@
 
 # Import Modules
 from tkinter import *
-import tkinter as tk
+from tkinter import messagebox
 from PIL import Image, ImageTk
+import random
+
 
 
 # Main Window Setups
@@ -44,8 +46,31 @@ bg_image = ImageTk.PhotoImage(image)
 figure = Image.open("Baldi.png")
 figure_image = ImageTk.PhotoImage(figure)
 
+# Set Global Variables that will be used throughout the program.
+# Need to set all to 0 or empty strings to reset values when starting.
+# The Global Syntax will be used inside functions to modify these variables.
+score = 0
+questionNumber = 1
+attempt = 1
+selectedDifficulty = ""
+operator = ""
+num1 = 0
+num2 = 0
 
-# Functions
+# Int and Operator Randomizer Function(RNG!!!)
+
+def randomInt(difficulty):
+    if difficulty == "Easy":
+        return random.randint(1, 9) # 1 Digit
+    elif difficulty == "Moderate":
+        return random.randint(10, 99) # 2 Digits
+    elif difficulty == "Advanced": # Goodluck Math Experts !  
+        return random.randint(1000, 9999) # 4 Digits
+
+def decideOperator():
+    return random.choice(['+', '-']) # Random Operator, either Addition or Subtraction.
+
+# Program Core Functions
 
 # Clears Everything on the Canvas(Removes the other contents so the screen doesn't bug)
 def clearCanvas():
@@ -82,7 +107,7 @@ def displayInstructions():
     
     # Creating the Title and Text
     canvas.create_text(250, 100, text="Instructions", font=("Arial", 32, "bold"), fill="white")
-    canvas.create_text(250, 250,text=instructions,font=("Arial", 14),justify="center",width=400,fill="white")
+    canvas.create_text(250, 250,text=instructions,font=("Arial", 12),justify="center",width=400,fill="white")
     canvas.create_window(250, 400, window=Button(root, text="Back", width=20,font=("Arial", 12), command=lambda: displayMenu()))
 
 # Difficulty Screen
@@ -100,8 +125,81 @@ def displayDifficulty():
     canvas.create_window(250, 320, window=Button(root, text="Advanced", width=20,font=("Arial", 12), command=lambda: startQuiz("Advanced")))
     canvas.create_window(250, 380, window=Button(root, text="Back", width=20,font=("Arial", 12), command=lambda: displayMenu()))
 
-def startQuiz(difficulty):
-    pass
+
+# Quiz Core Functions
+
+# Chooses the difficulty and starts the quiz, resetting all the variables.
+def startQuiz(selectedDifficulty):
+    global difficulty,score,questionNumber, attempt # Access the global variables
+    difficulty = selectedDifficulty
+    score = 0
+    questionNumber = 1
+    attempt = 1
+    displayProblem()
+
+
+# Displays the Math Questions on the screen, along with the question number, score, input box, and buttons.
+def displayProblem():
+    global num1, num2, operator, answer,score # Access global variables for 
+    clearCanvas()
+    canvas.create_image(0, 0, image=bg_image, anchor="nw")
+
+    num1 = randomInt(difficulty)
+    num2 = randomInt(difficulty)
+    operator = decideOperator()
+
+    canvas.create_text(250, 50, text=f"Question {questionNumber}/10", font=("Arial", 24, "bold"), fill="white")
+    canvas.create_text(250, 100, text=f"Score: {score}/100", font=("Arial", 12), fill="white")
+    canvas.create_text(250, 150, text=f"{num1} {operator} {num2} =", font=("Arial", 24), fill="white")
+    answer = Entry(root, font=("Arial", 12),justify="center", width=20)
+    canvas.create_window(250, 200, window=answer)
+    canvas.create_window(250, 250, window=Button(root, text="Submit", width=20,font=("Arial", 12), command=lambda: checkAnswer(answer.get())))
+    canvas.create_window(250, 300, window=Button(root, text="Exit", width=20,font=("Arial",12), command=lambda: displayMenu()))
+
+def checkAnswer(answer):
+    global score, questionNumber, attempt, operator, num1, num2
+
+    # Input Validation, making sure the answer is an integer. 
+    if answer.isdigit():
+        answer = int(answer)
+    else:
+        messagebox.showwarning("Invalid Input. Please Enter A Valid Number")
+        return
+
+    # Calculate Answer based on the operator and given numbers.
+    if operator == '+':
+        correctAnswer = num1 + num2
+    else:
+        correctAnswer = num1 - num2
+
+    # Adding Scores
+    # 10 Points for 1st Attempt
+    # 5 points for 2nd Attempt
+    # No points if both attempts are wrong.
+    if answer == correctAnswer:
+        if attempt == 1:
+            score += 10
+            messagebox.showinfo("Correct! You earned 10 points.")
+        else:
+            score += 5
+            messagebox.showinfo("Correct! However, that was your 2nd Attempt. You earned 5 points.")
+        questionNumber += 1
+        attempt = 1
+    else:
+        if attempt == 1:
+            attempt += 1
+            messagebox.showwarning("Incorrect! Try once more.")
+            return
+        else:
+            messagebox.showinfo("Wrong again!", f"The correct answer was {correctAnswer}.")
+            questionNumber += 1
+            attempt = 1    
+
+    # Check if the quiz is over after 10 questions.
+    if questionNumber > 10:
+        displayResults()
+    else:
+        displayProblem()
 
 
 def displayResults():
@@ -129,9 +227,8 @@ def displayResults():
     canvas.create_window(250, 200, window=Button(root, text="Play Again", width=20,font=("Arial", 12), command=lambda: startQuiz()))
     canvas.create_window(250, 320, window=Button(root, text="Exit", width=20,font=("Arial",12), command=root.destroy))
 
-def checkAnswer(user_answer):
-    pass
 
 
-displayMenu()
+
+displayDifficulty()
 root.mainloop()
