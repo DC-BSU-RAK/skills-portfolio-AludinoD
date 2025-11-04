@@ -9,8 +9,8 @@
 # Tkinter widgets has their own background color which makes it hard to blend with the background image(Bg Image isn't a solid color).
 
 # Frame Flow:
-# Menu Screen -> Play Button -> Difficulty Selection -> Quiz Screen -> Results Screen
-# Result Screen -> Play Again Button -> Difficulty Selection
+# Menu Screen -> Play Button -> Difficulty Screen -> Quiz Screen -> Results Screen
+# Result Screen -> Play Again Button -> Difficulty Screen
 # Menu Screen -> Instructions Button -> Menu Screen 
 # Exit Button -> Closes Program
 
@@ -51,9 +51,6 @@ figure_image = ImageTk.PhotoImage(figure)
 def clearCanvas():
     canvas.delete("all")
 
-def startQuiz(difficulty):
-    pass  # Placeholder for the startQuiz function
-
 
 def displayMenu():
     clearCanvas()
@@ -62,14 +59,14 @@ def displayMenu():
     
     # Creating the Title and Buttons
     canvas.create_text(250, 100, text="Baldi's Math Quiz", font=("Arial", 32, "bold"), fill="white")
-    canvas.create_window(250, 200, window=Button(root, text="Play", width=20,font=("Arial", 12), command=lambda: startQuiz()))
+    canvas.create_window(250, 200, window=Button(root, text="Play", width=20,font=("Arial", 12), command=lambda: displayDifficulty()))
     canvas.create_window(250, 260, window=Button(root, text="Instructions", width=20,font=("Arial", 12), command=lambda: displayInstructions()))
     canvas.create_window(250, 320, window=Button(root, text="Exit", width=20,font=("Arial",12), command=root.destroy))
 
     # Baldi Figure on the Left Side
     canvas.create_image(80, 260, image=figure_image, anchor="center")  
 
-
+# Instructions Screen
 def displayInstructions():
     clearCanvas()
     # Set Background
@@ -87,6 +84,24 @@ def displayInstructions():
     canvas.create_text(250, 100, text="Instructions", font=("Arial", 32, "bold"), fill="white")
     canvas.create_text(250, 250,text=instructions,font=("Arial", 14),justify="center",width=400,fill="white")
     canvas.create_window(250, 400, window=Button(root, text="Back", width=20,font=("Arial", 12), command=lambda: displayMenu()))
+
+# Difficulty Screen
+def displayDifficulty():
+    clearCanvas()
+    # Set Background
+    canvas.create_image(0, 0, image=bg_image, anchor="nw")
+
+    # Creating the Title and Buttons
+    canvas.create_text(250, 100, text="Select Difficulty", font=("Arial", 32, "bold"), fill="white")
+
+    # Difficulty Buttons
+    canvas.create_window(250, 200, window=Button(root, text="Easy", width=20,font=("Arial", 12), command=lambda: startQuiz("Easy")))
+    canvas.create_window(250, 260, window=Button(root, text="Moderate", width=20,font=("Arial", 12), command=lambda: startQuiz("Moderate")))
+    canvas.create_window(250, 320, window=Button(root, text="Advanced", width=20,font=("Arial", 12), command=lambda: startQuiz("Advanced")))
+    canvas.create_window(250, 380, window=Button(root, text="Back", width=20,font=("Arial", 12), command=lambda: displayMenu()))
+
+def startQuiz(difficulty):
+    pass
 
 
 def displayResults():
