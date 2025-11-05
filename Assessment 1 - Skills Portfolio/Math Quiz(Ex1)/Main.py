@@ -140,7 +140,7 @@ def startQuiz(selectedDifficulty):
 
 # Displays the Math Questions on the screen, along with the question number, score, input box, and buttons.
 def displayProblem():
-    global num1, num2, operator, answer,score # Access global variables for 
+    global num1, num2, operator, answer,score # Access global variables for the operation and problems.
     clearCanvas()
     canvas.create_image(0, 0, image=bg_image, anchor="nw")
 
@@ -159,11 +159,12 @@ def displayProblem():
 def checkAnswer(answer):
     global score, questionNumber, attempt, operator, num1, num2
 
-    # Input Validation, making sure the answer is an integer. 
+    # Input Validation, making sure the answer is an integer. (Update, I just realized, negative numbers aren't allowed as it only allows digits)
+    # Might Try another Method instead.
     if answer.isdigit():
         answer = int(answer)
     else:
-        messagebox.showwarning("Invalid Input. Please Enter A Valid Number")
+        messagebox.showwarning("Invalid Input.","Please Enter A Valid Number")
         return
 
     # Calculate Answer based on the operator and given numbers.
@@ -176,19 +177,25 @@ def checkAnswer(answer):
     # 10 Points for 1st Attempt
     # 5 points for 2nd Attempt
     # No points if both attempts are wrong.
+    # Update: Working as intended now, I realized that messagebox needs 2 values in order to show up properly(It was just showing title before)
+    # Also you get 3 chances now, because before it was only 2 attempts(It wasn't working as intended too because you're supposed to get 3 chances)
     if answer == correctAnswer:
         if attempt == 1:
             score += 10
-            messagebox.showinfo("Correct! You earned 10 points.")
-        else:
+            messagebox.showinfo("Correct!", "You earned 10 points.")
+        elif attempt == 2:
             score += 5
-            messagebox.showinfo("Correct! However, that was your 2nd Attempt. You earned 5 points.")
+            messagebox.showinfo("Correct!", "However, that was your 2nd Attempt. You earned 5 points.")
+        else:
+            messagebox.showinfo("Correct!", "However, That was your 3rd Attempt. No points awarded.")
+
         questionNumber += 1
         attempt = 1
+        
     else:
-        if attempt == 1:
+        if attempt < 3:
             attempt += 1
-            messagebox.showwarning("Incorrect! Try once more.")
+            messagebox.showwarning("Incorrect!", f"Try Again! (Attempt{attempt - 1}/3).")
             return
         else:
             messagebox.showinfo("Wrong again!", f"The correct answer was {correctAnswer}.")
