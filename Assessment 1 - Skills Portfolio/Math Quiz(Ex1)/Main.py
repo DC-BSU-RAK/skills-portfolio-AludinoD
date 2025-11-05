@@ -161,10 +161,11 @@ def checkAnswer(answer):
 
     # Input Validation, making sure the answer is an integer. (Update, I just realized, negative numbers aren't allowed as it only allows digits)
     # Might Try another Method instead.
-    if answer.isdigit():
+    # Found another method to check if the input is a valid number including negative numbers.
+    try:
         answer = int(answer)
-    else:
-        messagebox.showwarning("Invalid Input.","Please Enter A Valid Number")
+    except ValueError:
+        messagebox.showerror("Invalid Input", "Please enter a valid number.")
         return
 
     # Calculate Answer based on the operator and given numbers.
