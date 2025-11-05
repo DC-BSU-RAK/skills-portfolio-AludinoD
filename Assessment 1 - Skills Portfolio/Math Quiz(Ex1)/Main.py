@@ -40,11 +40,11 @@ canvas.pack(fill="both", expand=True)
 
 # Background Image that will be used for all screens
 image = Image.open("Background.png").resize((500, 500))
-bg_image = ImageTk.PhotoImage(image)
+bgImg = ImageTk.PhotoImage(image)
 
 # Baldi Image
 figure = Image.open("Baldi.png")
-figure_image = ImageTk.PhotoImage(figure)
+figureImg = ImageTk.PhotoImage(figure)
 
 # Set Global Variables that will be used throughout the program.
 # Need to set all to 0 or empty strings to reset values when starting.
@@ -80,7 +80,7 @@ def clearCanvas():
 def displayMenu():
     clearCanvas()
     # Set Background
-    canvas.create_image(0, 0, image=bg_image, anchor="nw")
+    canvas.create_image(0, 0, image=bgImg, anchor="nw")
     
     # Creating the Title and Buttons
     canvas.create_text(250, 100, text="Baldi's Math Quiz", font=("Arial", 32, "bold"), fill="white")
@@ -89,13 +89,13 @@ def displayMenu():
     canvas.create_window(250, 320, window=Button(root, text="Exit", width=20,font=("Arial",12), command=root.destroy))
 
     # Baldi Figure on the Left Side
-    canvas.create_image(80, 260, image=figure_image, anchor="center")  
+    canvas.create_image(80, 260, image=figureImg, anchor="center")  
 
 # Instructions Screen
 def displayInstructions():
     clearCanvas()
     # Set Background
-    canvas.create_image(0, 0, image=bg_image, anchor="nw")
+    canvas.create_image(0, 0, image=bgImg, anchor="nw")
 
     # Instructions Text
     instructions = ("Welcome to Baldi's Math Quiz!\n\n"
@@ -114,7 +114,7 @@ def displayInstructions():
 def displayDifficulty():
     clearCanvas()
     # Set Background
-    canvas.create_image(0, 0, image=bg_image, anchor="nw")
+    canvas.create_image(0, 0, image=bgImg, anchor="nw")
 
     # Creating the Title and Buttons
     canvas.create_text(250, 100, text="Select Difficulty", font=("Arial", 32, "bold"), fill="white")
@@ -142,7 +142,7 @@ def startQuiz(selectedDifficulty):
 def displayProblem():
     global num1, num2, operator, answer,score # Access global variables for the operation and problems.
     clearCanvas()
-    canvas.create_image(0, 0, image=bg_image, anchor="nw")
+    canvas.create_image(0, 0, image=bgImg, anchor="nw")
 
     num1 = randomInt(difficulty)
     num2 = randomInt(difficulty)
@@ -196,7 +196,7 @@ def checkAnswer(answer):
     else:
         if attempt < 3:
             attempt += 1
-            messagebox.showwarning("Incorrect!", f"Try Again! (Attempt{attempt - 1}/3).")
+            messagebox.showwarning("Incorrect!", f"Try Again! (Attempt {attempt - 1}/3).")
             return
         else:
             messagebox.showinfo("Wrong again!", f"The correct answer was {correctAnswer}.")
@@ -212,12 +212,14 @@ def checkAnswer(answer):
 
 def displayResults():
     clearCanvas()
-    canvas.create_image(0, 0, image=image, anchor="nw")
-    
+    # Set Background
+    canvas.create_image(0, 0, image=bgImg, anchor="nw")
+
+    # Title and Score    
     canvas.create_text(250, 100, text="Test Finished!", font=("Arial", 32, "bold"), fill="white")
-    canvas.create_text(250, 200, text=f"Your Score: {score}/100", font=("Arial", 24), fill="white")
+    canvas.create_text(250, 180, text=f"Your Score: {score}/100", font=("Arial", 24), fill="white")
 
-
+    # Grading System
     if score >= 90:
         grade = "A+"
     elif score >= 80:
@@ -231,12 +233,20 @@ def displayResults():
     else:
         grade = "F"
 
-    canvas.create_text(250, 260, text=f"grade: {grade}", font=("Arial", 24), fill="white")
-    canvas.create_window(250, 200, window=Button(root, text="Play Again", width=20,font=("Arial", 12), command=lambda: startQuiz()))
-    canvas.create_window(250, 320, window=Button(root, text="Exit", width=20,font=("Arial",12), command=root.destroy))
+    # Display Grade & Buttons
+    canvas.create_text(250, 250, text=f"Grade: {grade}", font=("Arial", 24), fill="white")
+    canvas.create_window(250, 330, window=Button(root, text="Play Again", width=20,font=("Arial", 12), command=lambda: displayDifficulty()))
+    canvas.create_window(250, 380, window=Button(root, text="Exit", width=20,font=("Arial",12), command=root.destroy))
+
+# Main Program Works Well and as Intended.
+
+# Improvements
+# The GUI can still be improved more with proper spacings and better assets.
+# I think Bg music and SFX can be added ? Will Try to add that if I figure it out.
+# Maybe more operators to make it challenging
 
 
 
-
-displayDifficulty()
+# Start Program
+displayMenu()
 root.mainloop()
