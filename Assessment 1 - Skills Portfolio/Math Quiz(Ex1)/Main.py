@@ -4,9 +4,13 @@
 # By: Deniz Marc Andrei Aludino
 # Notes: 
 # For some reason, the images don't show unless they're outside the folder? So I had them outside the Math Quiz(Ex1) folder.
+# Make sure that the images are downloaded and are in a folder.
+# Also, make sure you have the Pillow module installed to run this program. pip3 install Pillow in the terminal.
+# Pygame module is also needed for the sound effects. pip3 install pygame in the terminal.
 # Before making all the GUI in code, I designed it on Figma first so I can have a clear idea of how it would look like.
 # Most Buttons and Texts are from Canvas instead of Tkinter Widgets so it doesn't overlap the background image.
 # Tkinter widgets has their own background color which makes it hard to blend with the background image(Bg Image isn't a solid color).
+
 
 # Frame Flow:
 # Menu Screen -> Play Button -> Difficulty Screen -> Quiz Screen -> Results Screen
@@ -20,8 +24,7 @@ from tkinter import *
 from tkinter import messagebox
 from PIL import Image, ImageTk
 import random
-
-
+import pygame
 
 # Main Window Setups
 root = Tk()
@@ -32,7 +35,6 @@ root.geometry("500x500")
 # Used Canvas to set the background image without the widgets(Buttons Box) overlapping the background.
 # Transparent Labels/Buttons were not possible if I used the Tkinter Buttons(Cuz They had their own background color).
 # I couldn't manipulate the background color because my background image wasn't a solid color.
-
 canvas = Canvas(root, width=500, height=500, highlightthickness=0)
 canvas.pack(fill="both", expand=True)
 
@@ -45,6 +47,12 @@ bgImg = ImageTk.PhotoImage(image)
 # Baldi Image
 figure = Image.open("Baldi.png")
 figureImg = ImageTk.PhotoImage(figure)
+
+# Load Sound Effects
+pygame.mixer.init()
+pygame.mixer.music.load("bgMusic.mp3")
+pygame.mixer.music.play(-1)  # Play background music on loop
+
 
 # Set Global Variables that will be used throughout the program.
 # Need to set all to 0 or empty strings to reset values when starting.
@@ -127,6 +135,9 @@ def displayDifficulty():
 
 
 # Quiz Core Functions
+
+# Quiz Logic Explanation:
+
 
 # Chooses the difficulty and starts the quiz, resetting all the variables.
 def startQuiz(selectedDifficulty):
@@ -243,6 +254,7 @@ def displayResults():
 # Improvements
 # The GUI can still be improved more with proper spacings and better assets.
 # I think Bg music and SFX can be added ? Will Try to add that if I figure it out.
+# Better Buttons
 # Maybe more operators to make it challenging
 
 
