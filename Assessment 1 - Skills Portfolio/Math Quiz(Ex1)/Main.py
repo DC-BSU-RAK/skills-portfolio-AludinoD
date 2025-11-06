@@ -54,6 +54,17 @@ pygame.mixer.init()
 pygame.mixer.music.load("bgMusic.mp3")
 pygame.mixer.music.play(-1)  # Play background music on loop
 
+# Sound Effects 
+# Call when Correct Answer is given.
+def correctSFX():
+    correctSound = pygame.mixer.Sound("CorSfx.mp3")
+    correctSound.play()
+
+
+# Call when Incorrect Answer is given.
+def incSFX():
+    incorrectSound = pygame.mixer.Sound("IncSfx.mp3")
+    incorrectSound.play()
 
 # Set Global Variables that will be used throughout the program.
 # Need to set all to 0 or empty strings to reset values when starting.
@@ -198,12 +209,15 @@ def checkAnswer(answer):
     # Also you get 3 chances now, because before it was only 2 attempts(It wasn't working as intended too because you're supposed to get 3 chances)
     if answer == correctAnswer:
         if attempt == 1:
+            correctSFX()
             score += 10
             messagebox.showinfo("Correct!", "You earned 10 points.")
         elif attempt == 2:
+            correctSFX()
             score += 5
             messagebox.showinfo("Correct!", "However, that was your 2nd Attempt. You earned 5 points.")
         else:
+            correctSFX()
             messagebox.showinfo("Correct!", "However, That was your 3rd Attempt. No points awarded.")
 
         questionNumber += 1
@@ -211,10 +225,12 @@ def checkAnswer(answer):
         
     else:
         if attempt < 3:
+            incSFX()
             attempt += 1
             messagebox.showwarning("Incorrect!", f"Try Again! (Attempt {attempt - 1}/3).")
             return
         else:
+            incSFX()
             messagebox.showinfo("Wrong again!", f"The correct answer was {correctAnswer}.")
             questionNumber += 1
             attempt = 1    
@@ -258,7 +274,7 @@ def displayResults():
 
 # Improvements
 # The GUI can still be improved more with proper spacings and better assets.
-# I think Bg music and SFX can be added ? Will Try to add that if I figure it out.
+# I think Bg music and SFX can be added ? Will Try to add that if I figure it out. Update: Added Background Music and Sound Effects.
 # Better Buttons
 # Maybe more operators to make it challenging
 # Keyboard Inputs so users can just press Enter. Update: Added Enter Key and Auto Focus in the input bar.
