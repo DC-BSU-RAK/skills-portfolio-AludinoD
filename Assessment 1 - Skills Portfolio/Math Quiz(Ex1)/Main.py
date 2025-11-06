@@ -66,6 +66,17 @@ def incSFX():
     incorrectSound = pygame.mixer.Sound("IncSfx.mp3")
     incorrectSound.play()
 
+# I didn't know I can actually make a function for button styles, instead of hardcoding it for every button lol.
+# Also cool that it can use 2 parameters so the button can still work.
+# Makes the buttons look uniform too.
+# Also hover effects.
+# Will still need to fix the color system though.
+def buttonStyle(text,command):
+    btn = Button(root, text=text,font=("Arial", 12), width=20,command=command, bg="#4CAF50", fg="black", activebackground="#45a049",activeforeground="black")
+
+    btn.bind("<Enter>", lambda e: btn.config(bg="#45a049"))
+    btn.bind("<Leave>", lambda e: btn.config(bg="#4CAF50"))
+    return btn
 
 
 # Set Global Variables that will be used throughout the program.
@@ -106,9 +117,9 @@ def displayMenu():
     
     # Creating the Title and Buttons
     canvas.create_text(250, 100, text="Baldi's Math Quiz", font=("Arial", 32, "bold"), fill="white")
-    canvas.create_window(250, 200, window=Button(root, text="Play", width=20,font=("Arial", 12), command=lambda: displayDifficulty()))
-    canvas.create_window(250, 260, window=Button(root, text="Instructions", width=20,font=("Arial", 12), command=lambda: displayInstructions()))
-    canvas.create_window(250, 320, window=Button(root, text="Exit", width=20,font=("Arial",12), command=root.destroy))
+    canvas.create_window(250, 200, window=buttonStyle("Play", lambda: displayDifficulty()))
+    canvas.create_window(250, 260, window=buttonStyle("Instructions",lambda: displayInstructions()))
+    canvas.create_window(250, 320, window=buttonStyle("Exit",root.destroy))
 
     # Baldi Figure on the Left Side
     canvas.create_image(80, 260, image=figureImg, anchor="center")  
@@ -130,7 +141,7 @@ def displayInstructions():
     # Creating the Title and Text
     canvas.create_text(250, 100, text="Instructions", font=("Arial", 32, "bold"), fill="white")
     canvas.create_text(250, 200,text=instructions,font=("Arial", 12),justify="center",width=400,fill="white")
-    canvas.create_window(250, 320, window=Button(root, text="Back", width=20,font=("Arial", 12), command=lambda: displayMenu()))
+    canvas.create_window(250, 320, window=buttonStyle("Back", lambda: displayMenu()))
 
 # Difficulty Screen
 def displayDifficulty():
@@ -149,10 +160,10 @@ def displayDifficulty():
     canvas.create_text(250, 135, text="Select Difficulty", font=("Arial", 32, "bold"), fill="white")
 
     # Difficulty Buttons
-    canvas.create_window(250, 200, window=Button(root, text="Easy", width=20,font=("Arial", 12), command=lambda: startQuiz("Easy")))
-    canvas.create_window(250, 260, window=Button(root, text="Moderate", width=20,font=("Arial", 12), command=lambda: startQuiz("Moderate")))
-    canvas.create_window(250, 320, window=Button(root, text="Advanced", width=20,font=("Arial", 12), command=lambda: startQuiz("Advanced")))
-    canvas.create_window(250, 380, window=Button(root, text="Back", width=20,font=("Arial", 12), command=lambda: displayMenu()))
+    canvas.create_window(250, 200, window=buttonStyle("Easy", lambda: startQuiz("Easy")))
+    canvas.create_window(250, 260, window=buttonStyle("Moderate", lambda: startQuiz("Moderate")))
+    canvas.create_window(250, 320, window=buttonStyle("Advanced", lambda: startQuiz("Advanced")))
+    canvas.create_window(250, 380, window=buttonStyle("Back", lambda: displayMenu()))
 
 
 
@@ -205,9 +216,9 @@ def displayProblem():
     canvas.create_text(250, 150, text=f"{num1} {operator} {num2} =", font=("Arial", 24), fill="white")
     answer = Entry(root, font=("Arial", 12),justify="center", width=20)
     canvas.create_window(250, 200, window=answer)
-    canvas.create_window(250, 250, window=Button(root, text="Submit", width=20,font=("Arial", 12), command=lambda: checkAnswer(answer.get())))
+    canvas.create_window(250, 250, window=buttonStyle("Submit", lambda: checkAnswer(answer.get())))
     answer.focus_set()
-    canvas.create_window(250, 300, window=Button(root, text="Exit", width=20,font=("Arial",12), command=lambda: displayMenu()))
+    canvas.create_window(250, 300, window=buttonStyle("Exit", lambda: displayMenu()))
     root.bind('<Return>', lambda event: checkAnswer(answer.get())) 
 
 
@@ -297,8 +308,8 @@ def displayResults():
 
     # Display Grade & Buttons
     canvas.create_text(250, 250, text=f"Grade: {grade}", font=("Arial", 24), fill="white")
-    canvas.create_window(250, 330, window=Button(root, text="Play Again", width=20,font=("Arial", 12), command=lambda: displayDifficulty()))
-    canvas.create_window(250, 380, window=Button(root, text="Exit", width=20,font=("Arial",12), command=root.destroy))
+    canvas.create_window(250, 330, window=buttonStyle("Play Again", lambda: displayDifficulty()))
+    canvas.create_window(250, 380, window=buttonStyle("Exit", root.destroy))
 
 # Main Program Works Well and as Intended.
 
@@ -309,7 +320,6 @@ def displayResults():
 # Maybe add a Name Input so it can display on the result screen. Update: Added Name Input before the quiz starts, that mentions the name on the result.
 # Maybe more operators to make it challenging
 # Keyboard Inputs so users can just press Enter. Update: Added Enter Key and Auto Focus in the input bar.
-
 
 
 # Start Program
