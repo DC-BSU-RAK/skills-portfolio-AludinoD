@@ -30,7 +30,7 @@ import pygame
 root = Tk()
 root.title ("Baldi's Math Quiz")
 root.geometry("500x500")
-root.iconbitmap("icon.ico")  
+root.iconbitmap("icon.ico")  # Changed Window Icon
 
 # Create Canvas For all The screens
 # Used Canvas to set the background image without the widgets(Buttons Box) overlapping the background.
@@ -166,7 +166,11 @@ def displayProblem():
     answer = Entry(root, font=("Arial", 12),justify="center", width=20)
     canvas.create_window(250, 200, window=answer)
     canvas.create_window(250, 250, window=Button(root, text="Submit", width=20,font=("Arial", 12), command=lambda: checkAnswer(answer.get())))
+    answer.focus_set()
     canvas.create_window(250, 300, window=Button(root, text="Exit", width=20,font=("Arial",12), command=lambda: displayMenu()))
+    root.bind('<Return>', lambda event: checkAnswer(answer.get())) 
+
+
 
 def checkAnswer(answer):
     global score, questionNumber, attempt, operator, num1, num2
@@ -257,7 +261,7 @@ def displayResults():
 # I think Bg music and SFX can be added ? Will Try to add that if I figure it out.
 # Better Buttons
 # Maybe more operators to make it challenging
-# Keyboard Inputs so users can just press Enter.
+# Keyboard Inputs so users can just press Enter. Update: Added Enter Key and Auto Focus in the input bar.
 
 
 
