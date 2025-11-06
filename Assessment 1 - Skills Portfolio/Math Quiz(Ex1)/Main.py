@@ -7,7 +7,7 @@
 # Make sure that the images are downloaded and are in a folder.
 # Also, make sure you have the Pillow module installed to run this program. pip3 install Pillow in the terminal.
 # Pygame module is also needed for the sound effects. pip3 install pygame in the terminal.
-# Before making all the GUI in code, I designed it on Figma first so I can have a clear idea of how it would look like.
+# Before making all the GUI in code, I designed a rough sketch on Figma first so I can have a clear idea of how it would look like.(Especially cuz it uses x and y for positions)
 # Most Buttons and Texts are from Canvas instead of Tkinter Widgets so it doesn't overlap the background image.
 # Tkinter widgets has their own background color which makes it hard to blend with the background image(Bg Image isn't a solid color).
 
@@ -65,6 +65,8 @@ def correctSFX():
 def incSFX():
     incorrectSound = pygame.mixer.Sound("IncSfx.mp3")
     incorrectSound.play()
+
+
 
 # Set Global Variables that will be used throughout the program.
 # Need to set all to 0 or empty strings to reset values when starting.
@@ -132,12 +134,19 @@ def displayInstructions():
 
 # Difficulty Screen
 def displayDifficulty():
+    global userNameEntry
     clearCanvas()
     # Set Background
     canvas.create_image(0, 0, image=bgImg, anchor="nw")
 
     # Creating the Title and Buttons
-    canvas.create_text(250, 100, text="Select Difficulty", font=("Arial", 32, "bold"), fill="white")
+    canvas.create_text(250, 50, text="Name:", font=("Arial", 16, "bold"), fill="white")
+    # Add Name Input Box
+    userNameEntry = Entry(root, font=("Arial", 12),justify="center", width=20)
+    canvas.create_window(250, 80, window=userNameEntry)
+    userNameEntry.focus_set()
+
+    canvas.create_text(250, 135, text="Select Difficulty", font=("Arial", 32, "bold"), fill="white")
 
     # Difficulty Buttons
     canvas.create_window(250, 200, window=Button(root, text="Easy", width=20,font=("Arial", 12), command=lambda: startQuiz("Easy")))
@@ -146,18 +155,38 @@ def displayDifficulty():
     canvas.create_window(250, 380, window=Button(root, text="Back", width=20,font=("Arial", 12), command=lambda: displayMenu()))
 
 
-# Quiz Core Functions
 
 # Quiz Logic Explanation:
+# Since each part of the code uses frames, its easier to show it part by part.
+# When the user presses the Play Button in the Menu screen, it calls the difficulty screen.
+# Users can then choose the difficulty, which then calls the startQuiz function.
+# The startQuiz Function sets all the variables to 0 or empty strings so it doesn't save last game's data.
+# It then calls the displayProblem function that shows the questions.
+# The question comes from the combination of randomInt and decideOperator functions.
+# The randomInt function generates random numbers based on the selected difficulty.
+# While the decideOperator function randomly chooses either addition or subtraction.
+# It then returns those global variables to display the problem.
+# Additionally, the program uses those values to create the correct answer.
+# The correct answer is then saved in the correctAnswer variable inside the checkAnswer function.
+# The user then inputs their answer in the input box. Then they can either press the Submit button or Enter key to submit their answer.
+# The CheckAnswer function then checks if the answer is correct or not.
+# If the answer is correct, it adds score based on the attempt number(1st, 2nd, or 3rd attempt).
+# If the answer is incorrect, it increases the attempt number and prompts the user to try again.
+# After 3 attempts, and the answer is still wrong, it shows the answer and gives 0 points then moves to the next.
 
+
+# Quiz Core Functions
 
 # Chooses the difficulty and starts the quiz, resetting all the variables.
 def startQuiz(selectedDifficulty):
-    global difficulty,score,questionNumber, attempt # Access the global variables
+    global difficulty,score,questionNumber, attempt, userName # Access the global variables
     difficulty = selectedDifficulty
     score = 0
     questionNumber = 1
     attempt = 1
+    userName = userNameEntry.get().strip()
+    if userName == "":
+        userName = "Player"
     displayProblem()
 
 
@@ -236,19 +265,20 @@ def checkAnswer(answer):
             attempt = 1    
 
     # Check if the quiz is over after 10 questions.
-    if questionNumber > 10:
+    if questionNumber > 1:
         displayResults()
     else:
         displayProblem()
 
 
 def displayResults():
+    global userName
     clearCanvas()
     # Set Background
     canvas.create_image(0, 0, image=bgImg, anchor="nw")
 
     # Title and Score    
-    canvas.create_text(250, 100, text="Test Finished!", font=("Arial", 32, "bold"), fill="white")
+    canvas.create_text(250, 100, text=f"Congrats {userName}! The test is Finished", font=("Arial", 18, "bold"), fill="white")
     canvas.create_text(250, 180, text=f"Your Score: {score}/100", font=("Arial", 24), fill="white")
 
     # Grading System
@@ -272,10 +302,11 @@ def displayResults():
 
 # Main Program Works Well and as Intended.
 
-# Improvements
+# Improvements: 
 # The GUI can still be improved more with proper spacings and better assets.
 # I think Bg music and SFX can be added ? Will Try to add that if I figure it out. Update: Added Background Music and Sound Effects.
 # Better Buttons
+# Maybe add a Name Input so it can display on the result screen. Update: Added Name Input before the quiz starts, that mentions the name on the result.
 # Maybe more operators to make it challenging
 # Keyboard Inputs so users can just press Enter. Update: Added Enter Key and Auto Focus in the input bar.
 
