@@ -30,6 +30,7 @@ import pygame
 root = Tk()
 root.title ("Baldi's Math Quiz")
 root.geometry("500x500")
+root.iconbitmap("icon.ico")  
 
 # Create Canvas For all The screens
 # Used Canvas to set the background image without the widgets(Buttons Box) overlapping the background.
@@ -115,8 +116,8 @@ def displayInstructions():
     
     # Creating the Title and Text
     canvas.create_text(250, 100, text="Instructions", font=("Arial", 32, "bold"), fill="white")
-    canvas.create_text(250, 250,text=instructions,font=("Arial", 12),justify="center",width=400,fill="white")
-    canvas.create_window(250, 400, window=Button(root, text="Back", width=20,font=("Arial", 12), command=lambda: displayMenu()))
+    canvas.create_text(250, 200,text=instructions,font=("Arial", 12),justify="center",width=400,fill="white")
+    canvas.create_window(250, 320, window=Button(root, text="Back", width=20,font=("Arial", 12), command=lambda: displayMenu()))
 
 # Difficulty Screen
 def displayDifficulty():
@@ -256,6 +257,7 @@ def displayResults():
 # I think Bg music and SFX can be added ? Will Try to add that if I figure it out.
 # Better Buttons
 # Maybe more operators to make it challenging
+# Keyboard Inputs so users can just press Enter.
 
 
 
