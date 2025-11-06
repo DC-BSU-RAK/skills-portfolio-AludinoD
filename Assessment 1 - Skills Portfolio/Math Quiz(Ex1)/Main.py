@@ -8,7 +8,7 @@
 # Also, make sure you have the Pillow module installed to run this program. pip3 install Pillow in the terminal.
 # Pygame module is also needed for the sound effects. pip3 install pygame in the terminal.
 # Before making all the GUI in code, I designed a rough sketch on Figma first so I can have a clear idea of how it would look like.(Especially cuz it uses x and y for positions)
-# Most Buttons and Texts are from Canvas instead of Tkinter Widgets so it doesn't overlap the background image.
+# Most Buttons and Texts are from Canvas(Also a part of tkinter) instead of Tkinter Widgets so it doesn't overlap the background image.
 # Tkinter widgets has their own background color which makes it hard to blend with the background image(Bg Image isn't a solid color).
 
 
@@ -66,12 +66,17 @@ def incSFX():
     incorrectSound = pygame.mixer.Sound("IncSfx.mp3")
     incorrectSound.play()
 
+def clickSfx():
+    clickSound = pygame.mixer.Sound("ClickSfx.mp3")
+    clickSound.play()
+
 # I didn't know I can actually make a function for button styles, instead of hardcoding it for every button lol.
 # Also cool that it can use 2 parameters so the button can still work.
 # Makes the buttons look uniform too.
 # Also hover effects.
 # Will still need to fix the color system though.
 def buttonStyle(text,command):
+    clickSfx()
     btn = Button(root, text=text,font=("Arial", 12), width=20,command=command, bg="#4CAF50", fg="black", activebackground="#45a049",activeforeground="black")
 
     btn.bind("<Enter>", lambda e: btn.config(bg="#45a049"))
@@ -289,7 +294,7 @@ def displayResults():
     canvas.create_image(0, 0, image=bgImg, anchor="nw")
 
     # Title and Score    
-    canvas.create_text(250, 100, text=f"Congrats {userName}! The test is Finished", font=("Arial", 18, "bold"), fill="white")
+    canvas.create_text(250, 100, text=f"Congrats {userName}! The test is Finished!", font=("Arial", 18, "bold"), fill="white")
     canvas.create_text(250, 180, text=f"Your Score: {score}/100", font=("Arial", 24), fill="white")
 
     # Grading System
@@ -316,11 +321,13 @@ def displayResults():
 # Improvements: 
 # The GUI can still be improved more with proper spacings and better assets.
 # I think Bg music and SFX can be added ? Will Try to add that if I figure it out. Update: Added Background Music and Sound Effects.
-# Better Buttons
+# Better Buttons # Update: Added Button Styles and Hover Effects. Color can still be improved though.
 # Maybe add a Name Input so it can display on the result screen. Update: Added Name Input before the quiz starts, that mentions the name on the result.
 # Maybe more operators to make it challenging
 # Keyboard Inputs so users can just press Enter. Update: Added Enter Key and Auto Focus in the input bar.
 
+# Final Key Notes (Before Submission): IMPORTANT!!!! 
+# Fix some other comments and remove unnecessary codes(Such as dev comments lol, theyre gonna stay HIDDEN in the version history anyway)
 
 # Start Program
 displayMenu()
