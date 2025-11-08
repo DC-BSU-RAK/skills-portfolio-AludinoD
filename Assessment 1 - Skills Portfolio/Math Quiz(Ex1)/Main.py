@@ -71,11 +71,9 @@ def clickSfx():
     clickSound = pygame.mixer.Sound("ClickSfx.mp3")
     clickSound.play()
 
-# I didn't know I can actually make a function for button styles, instead of hardcoding it for every button lol.
-# Also cool that it can use 2 parameters so the button can still work.
-# Makes the buttons look uniform too.
-# Also hover effects.
-# Will still need to fix the color system though.
+# Button Style
+# Yellow ish Theme
+# Has hover effects and cursor
 def buttonStyle(text,command):
     clickSfx()
     btn = Button(root, text=text,font=("Arial", 12), width=20,command=command, bg="#ffd966", fg="#000000", activebackground="#ffc107", cursor="hand2")
@@ -135,6 +133,7 @@ def displayInstructions():
     clearCanvas()
     # Set Background
     canvas.create_image(0, 0, image=bgImg, anchor="nw")
+    canvas.create_image(80, 370, image=figureImg, anchor="center")  
 
     # Instructions Text
     instructions = ("Welcome to Baldi's Math Quiz!\n\n"
@@ -162,7 +161,7 @@ def displayDifficulty():
     # Add Name Input Box
     userNameEntry = Entry(root, font=("Arial", 12),justify="center", width=20)
     canvas.create_window(250, 80, window=userNameEntry)
-    userNameEntry.focus_set()
+    userNameEntry.focus_set() # Auto Highlights Input Box
 
     canvas.create_text(250, 135, text="Select Difficulty", font=("Arial", 32, "bold"), fill="white")
 
@@ -223,30 +222,30 @@ def displayProblem():
     operator = decideOperator()
 
     # Prints all of the stored values that it got.
+    # Labels
     canvas.create_text(250, 50, text=f"Question {questionNumber}/10", font=("Arial", 24, "bold"), fill="white")
     canvas.create_text(250, 100, text=f"Score: {score}/100", font=("Arial", 12), fill="white")
     canvas.create_text(250, 150, text=f"{num1} {operator} {num2} =", font=("Arial", 24), fill="white")
     answer = Entry(root, font=("Arial", 12),justify="center", width=20)
     answer.focus_set() # Auto Highlights the user input box
     canvas.create_window(250, 200, window=answer)
+    # Buttons
     canvas.create_window(250, 250, window=buttonStyle("Submit", lambda: checkAnswer(answer.get())))
     canvas.create_window(250, 300, window=buttonStyle("Exit", lambda: displayMenu()))
     root.bind('<Return>', lambda event: checkAnswer(answer.get())) # Can press enter to submit instead of clicking button.
 
 
-
+# Checks user Answers
 def checkAnswer(user_input):
     global score, questionNumber, attempt, operator, num1, num2
 
-    # Input Validation, making sure the answer is an integer. (Update, I just realized, negative numbers aren't allowed as it only allows digits)
-    # Might Try another Method instead.
-    # Found another method to check if the input is a valid number including negative numbers.
+    # Input Validation that checks if the user input is the correct type (Integer)
     try:
         user_answer = int(user_input)
-    except ValueError:
+    except ValueError: # In some cases where the user adds strings, it catches that error and tells them to enter a number.
         messagebox.showerror("Invalid Input", "Please enter a valid number.")
-        answer.delete(0, END)
-        answer.focus_set()
+        answer.delete(0, END) # Deletes the input
+        answer.focus_set() # Highlight input box
         return
 
     # Calculate Answer based on the operator and given numbers.
@@ -257,10 +256,9 @@ def checkAnswer(user_input):
 
     # Adding Scores
     # 10 Points for 1st Attempt
-    # 5 points for 2nd Attempt
+    # 5 Points for 2nd Attempt
+    # 0 Points for 3rd Attempt
     # No points if both attempts are wrong.
-    # Update: Working as intended now, I realized that messagebox needs 2 values in order to show up properly(It was just showing title before)
-    # Also you get 3 chances now, because before it was only 2 attempts(It wasn't working as intended too because you're supposed to get 3 chances)
     if user_answer == correctAnswer:
         if attempt == 1:
             correctSFX()
@@ -328,18 +326,23 @@ def displayResults():
     canvas.create_window(250, 330, window=buttonStyle("Play Again", lambda: displayDifficulty()))
     canvas.create_window(250, 380, window=buttonStyle("Exit", root.destroy))
 
-# Main Program Works Well and as Intended.
+# Final Version that works, until further updates.
+# Current Features the quiz has :
+# Different Screens for each part of the quiz.
+# Button Hover Effects (Cursor and Color) and a style.
+# Input Validations
+# 2 random Operators (Addition & Subtraction)
+# 3 Difficulty Levels that user can choose (Easy, Moderate, Advanced).
+# Random Number Generator that's based on the users difficulty Level.
+# Auto Highlights Input Boxes, and auto Deletes them after submission(so user doesn't need to delete manually).
+# Binded Enter Key(So user doesn't need to press submit manually).
+# Theres also messageboxes that tell if the user is correct or wrong.
+# Result Screen at the end that : 
+# Shows Grade and Total Points acquired.
+# Play button or exit.
 
-# Improvements: 
-# The GUI can still be improved more with proper spacings and better assets.
-# I think Bg music and SFX can be added ? Will Try to add that if I figure it out. Update: Added Background Music and Sound Effects.
-# Better Buttons # Update: Added Button Styles and Hover Effects. Color can still be improved though.
-# Maybe add a Name Input so it can display on the result screen. Update: Added Name Input before the quiz starts, that mentions the name on the result.
-# Maybe more operators to make it challenging
-# Keyboard Inputs so users can just press Enter. Update: Added Enter Key and Auto Focus in the input bar.
-
-# Final Key Notes (Before Submission): IMPORTANT!!!! 
-# Fix some other comments and remove unnecessary codes(Such as dev comments lol, theyre gonna stay HIDDEN in the version history anyway)
+# Additionally, It also has Bg music, sound effects (Correct, Incorrect, Clicking button).
+# And A Custom Icon for the game.
 
 # Start Program
 displayMenu()
