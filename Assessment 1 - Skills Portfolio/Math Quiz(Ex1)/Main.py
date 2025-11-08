@@ -20,11 +20,11 @@
 
 
 # Import Modules
-from tkinter import *
-from tkinter import messagebox
-from PIL import Image, ImageTk
-import random
-import pygame
+from tkinter import * # Tkinter 
+from tkinter import messagebox # Message Box
+from PIL import Image, ImageTk # Images
+import random # Number and Operator
+import pygame # Sound Effects
 
 # Main Window Setups
 root = Tk()
@@ -66,6 +66,7 @@ def incSFX():
     incorrectSound = pygame.mixer.Sound("IncSfx.mp3")
     incorrectSound.play()
 
+# Click Button Sound Effect
 def clickSfx():
     clickSound = pygame.mixer.Sound("ClickSfx.mp3")
     clickSound.play()
@@ -77,10 +78,10 @@ def clickSfx():
 # Will still need to fix the color system though.
 def buttonStyle(text,command):
     clickSfx()
-    btn = Button(root, text=text,font=("Arial", 12), width=20,command=command, bg="#4CAF50", fg="black", activebackground="#45a049",activeforeground="black")
+    btn = Button(root, text=text,font=("Arial", 12), width=20,command=command, bg="#ffd966", fg="#000000", activebackground="#ffc107", cursor="hand2")
 
-    btn.bind("<Enter>", lambda e: btn.config(bg="#45a049"))
-    btn.bind("<Leave>", lambda e: btn.config(bg="#4CAF50"))
+    btn.bind("<Enter>", lambda e: btn.config(bg="#ffc107"))
+    btn.bind("<Leave>", lambda e: btn.config(bg="#ffd966"))
     return btn
 
 
@@ -114,7 +115,7 @@ def decideOperator():
 def clearCanvas():
     canvas.delete("all")
 
-
+# Main Menu Screen 
 def displayMenu():
     clearCanvas()
     # Set Background
@@ -157,6 +158,7 @@ def displayDifficulty():
 
     # Creating the Title and Buttons
     canvas.create_text(250, 50, text="Name:", font=("Arial", 16, "bold"), fill="white")
+
     # Add Name Input Box
     userNameEntry = Entry(root, font=("Arial", 12),justify="center", width=20)
     canvas.create_window(250, 80, window=userNameEntry)
@@ -189,6 +191,8 @@ def displayDifficulty():
 # If the answer is correct, it adds score based on the attempt number(1st, 2nd, or 3rd attempt).
 # If the answer is incorrect, it increases the attempt number and prompts the user to try again.
 # After 3 attempts, and the answer is still wrong, it shows the answer and gives 0 points then moves to the next.
+# It checks if there are more than 10 Questions, if it its more than 10, it shows the results screen
+# If it's not, it continues until it reaches more than 10.
 
 
 # Quiz Core Functions
@@ -201,6 +205,7 @@ def startQuiz(selectedDifficulty):
     questionNumber = 1
     attempt = 1
     userName = userNameEntry.get().strip()
+    # Checks if the user didn't add a username, if they didn't, it defaults to Player.
     if userName == "":
         userName = "Player"
     displayProblem()
@@ -212,32 +217,36 @@ def displayProblem():
     clearCanvas()
     canvas.create_image(0, 0, image=bgImg, anchor="nw")
 
+    # Gets the Values from the functions and stores it.
     num1 = randomInt(difficulty)
     num2 = randomInt(difficulty)
     operator = decideOperator()
 
+    # Prints all of the stored values that it got.
     canvas.create_text(250, 50, text=f"Question {questionNumber}/10", font=("Arial", 24, "bold"), fill="white")
     canvas.create_text(250, 100, text=f"Score: {score}/100", font=("Arial", 12), fill="white")
     canvas.create_text(250, 150, text=f"{num1} {operator} {num2} =", font=("Arial", 24), fill="white")
     answer = Entry(root, font=("Arial", 12),justify="center", width=20)
+    answer.focus_set() # Auto Highlights the user input box
     canvas.create_window(250, 200, window=answer)
     canvas.create_window(250, 250, window=buttonStyle("Submit", lambda: checkAnswer(answer.get())))
-    answer.focus_set()
     canvas.create_window(250, 300, window=buttonStyle("Exit", lambda: displayMenu()))
-    root.bind('<Return>', lambda event: checkAnswer(answer.get())) 
+    root.bind('<Return>', lambda event: checkAnswer(answer.get())) # Can press enter to submit instead of clicking button.
 
 
 
-def checkAnswer(answer):
+def checkAnswer(user_input):
     global score, questionNumber, attempt, operator, num1, num2
 
     # Input Validation, making sure the answer is an integer. (Update, I just realized, negative numbers aren't allowed as it only allows digits)
     # Might Try another Method instead.
     # Found another method to check if the input is a valid number including negative numbers.
     try:
-        answer = int(answer)
+        user_answer = int(user_input)
     except ValueError:
         messagebox.showerror("Invalid Input", "Please enter a valid number.")
+        answer.delete(0, END)
+        answer.focus_set()
         return
 
     # Calculate Answer based on the operator and given numbers.
@@ -252,7 +261,7 @@ def checkAnswer(answer):
     # No points if both attempts are wrong.
     # Update: Working as intended now, I realized that messagebox needs 2 values in order to show up properly(It was just showing title before)
     # Also you get 3 chances now, because before it was only 2 attempts(It wasn't working as intended too because you're supposed to get 3 chances)
-    if answer == correctAnswer:
+    if user_answer == correctAnswer:
         if attempt == 1:
             correctSFX()
             score += 10
@@ -267,12 +276,14 @@ def checkAnswer(answer):
 
         questionNumber += 1
         attempt = 1
-        
+    # Wrong Answers
     else:
         if attempt < 3:
             incSFX()
             attempt += 1
             messagebox.showwarning("Incorrect!", f"Try Again! (Attempt {attempt - 1}/3).")
+            answer.delete(0, END)
+            answer.focus_set()
             return
         else:
             incSFX()
@@ -280,15 +291,16 @@ def checkAnswer(answer):
             questionNumber += 1
             attempt = 1    
 
-    # Check if the quiz is over after 10 questions.
-    if questionNumber > 1:
+    # Check if the number of question is above 10. If it is, It shows the results
+    # If it isn't, it continues.
+    if questionNumber > 10:
         displayResults()
     else:
         displayProblem()
 
-
+# Results Screen
 def displayResults():
-    global userName
+    global userName # Grabs the userName so the program can call it.
     clearCanvas()
     # Set Background
     canvas.create_image(0, 0, image=bgImg, anchor="nw")
