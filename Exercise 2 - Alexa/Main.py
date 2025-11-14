@@ -11,8 +11,11 @@
 # Canvas will be used again.
 
 # Frame Flow
-# Menu Screen -> Start Button -> Joke Screen -> Joke Button -> Exit Button
+# Menu Screen -> Start Button -> Joke Screen -> Joke Button -> Show Joke -> Next Joke -> Repeat until Exit
 # Exit Button -> Exit Program
+
+# Joke Screen Flow
+# Empty Joke -> Joke Button -> Show Joke -> Reveal Joke -> Punchline Button -> Show Punchline -> Next Joke Button -> Repeat
 
 
 from tkinter import * # Main Tkinter Program
@@ -32,16 +35,22 @@ canvas.pack(fill="both", expand=True)
 
 # Load Images
 
-# Background Image that will be used for all screens
+# Main Menu Background Screen
 menuBg = Image.open("menuBg.jpg").resize((500,500))
 bgImg = ImageTk.PhotoImage(menuBg)
 
+# Background 2 for other Frames
+bg2 = Image.open("bg2.jpg").resize((500,500))
+bgImg2 = ImageTk.PhotoImage(bg2)
+
+
 # Alexa Figure
-figure = Image.open("alexa.png")
+figure = Image.open("alexa.png").resize((100,100))
 figureImg = ImageTk.PhotoImage(figure)
 
+
 def buttonStyle(text,command):
-    btn = Button(root, text=text,font=("Arial", 12), width=10,command=command, bg="#007AFF", fg="#000000", activebackground="#005FCC", cursor="hand2")
+    btn = Button(root, text=text,font=("Arial", 12), width=12,command=command, bg="#007AFF", fg="#000000", activebackground="#005FCC", cursor="hand2")
 
     btn.bind("<Enter>", lambda e: btn.config(bg="#005FCC"))
     btn.bind("<Leave>", lambda e: btn.config(bg="#007AFF"))
@@ -61,30 +70,94 @@ def displayMenu():
     # Creating the Title and Buttons
     canvas.create_text(230, 120, text="Tell Me A Joke", font=("Arial", 32, "bold"), fill="white")
     # Buttons are Horizontally Arranged
-    canvas.create_window(120, 410, window=buttonStyle("Play", lambda:()))
+    canvas.create_window(120, 410, window=buttonStyle("Play", lambda:displayJokeScreen()))
     canvas.create_window(250, 410, window=buttonStyle("Instructions",lambda:displayInstructions()))
     canvas.create_window(380, 410, window=buttonStyle("Exit",root.destroy))
 
 
 
 def displayInstructions():
-    pass
+    clearCanvas()
+    canvas.create_image(0, 0, image=bgImg2,anchor="nw")
+
+    # Instructions Text
+    instructions = ("Welcome to Alexa's Jokes!\n\n"
+                    "1. Choose Play to Start.\n"
+                    "2. Press 'Tell me a Joke' to hear a joke\n"
+                    "3. Press 'Show Punchline to reveal it.'\n"
+                    "4. Press 'Next Joke' for another.\n"
+                    "5. Press 'Exit' if you had enough fun.\n"
+                    "6. ENJOY! and Try not to laugh too loud!")
+    
+    # Creating the Title and Text
+    canvas.create_text(250, 100, text="Instructions", font=("Arial", 32, "bold"), fill="white")
+    canvas.create_text(250, 200,text=instructions,font=("Arial", 12),justify="center",width=400,fill="white")
+    canvas.create_window(250, 320, window=buttonStyle("Back", lambda: displayMenu()))
+
 
 
 def displayJokeScreen():
-    pass
+    clearCanvas()
+    # Set Bg
+    canvas.create_image(0, 0, image=bgImg2,anchor="nw")
 
-# Tools
+    # Alexa Model
+    canvas.create_image(380, 50, image=figureImg,anchor="nw")
 
+    # Buttons
+    canvas.create_window(180, 350, window=buttonStyle("Show Punchline", showPunchLine))
+    canvas.create_window(320, 350, window=buttonStyle("Next Joke", showJoke))
+    canvas.create_window(250, 420, window=buttonStyle("Exit", root.destroy))
+
+
+# This Function opens the file and gets the jokes From the txt file.
+# It gets a line and removes all spaces using the strip.
+# It then finds the "?" in the text, then splits the text after the "?" so it becomes 2 seperate values.
+# It then stores those values in setup and punchline that will be used in the showJoke and showPunchLine Functions.
 def loadJokes():
-    pass
+    jokes = []
+    try:
+        with open("randomJokes.txt") as file:
+            for line in file:
+                line = line.strip()
+                if "?" in line:
+                    setup,punchline = line.split("?",1)
+                    jokes.append((setup + "?", punchline))
+        return jokes
+    except:
+        return [("Jokes Not Found, Unfunny.")]
 
+jokes = loadJokes()
+currentJoke = None
+
+# This function works when the Show Joke Button is pressed.
+# It chooses a random choice in the txt file and it deletes previous texts(if there is), then loads in the new one.
 def showJoke():
-    pass
+    global currentJoke
 
+    currentJoke = random.choice(jokes)
+    canvas.delete("setupText")
+    canvas.delete("punchText")
+
+    canvas.create_text(230,100,text=currentJoke[0],font=("Arial",16,"bold"),fill="white",width=250,tags="setupText")
+
+# This Function works when the Show Punchline Button Is Pressed.
+# It checks if the Joke is available or not. If there's no joke yet, it tells the user there isn't any.
+# But when there is, it shows the punchline
 def showPunchLine():
-    pass
+    if not currentJoke:
+        canvas.create_text(250,200, text="No Joke Yet",font=("Arial",16),fill="white",width=200,tags="punchText")
+        return
+    
+    canvas.delete("punchText")
+    canvas.create_text(250,200, text=currentJoke[1],font=("Arial",16),fill="white",width=200,tags="punchText")
 
+# Improvements :
+# Layout can be changed in the Display Joke Screen.
+# Music and Sfx
+# Maybe an add joke Function if thats possible? So the user can add Jokes if they want in the txt file.
+# Probably Python Text To Speech
 
+# Start Program
 displayMenu()
 root.mainloop()
