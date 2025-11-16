@@ -48,8 +48,39 @@ bgImg2 = ImageTk.PhotoImage(bg2)
 figure = Image.open("alexa.png").resize((100,100))
 figureImg = ImageTk.PhotoImage(figure)
 
+# Load Sound Effects
 
+pygame.mixer.init()
+pygame.mixer.music.load("elevMusic.mp3")
+pygame.mixer.music.play(-1)  # Play background music on loop
+
+# Button Click SFX
+def clickSfx():
+    clickSound = pygame.mixer.Sound("ClickSfx.mp3")
+    clickSound.play()
+
+
+# Laughing Sound Effects 
+# Choose a random laugh mp3.
+# Initialize options for the random module to choose from.
+laughOptions = [
+    "laugh1.mp3",
+    "laugh2.mp3",
+    "laugh3.mp3"
+]
+
+def laughSfx():
+    laugh = random.choice(laughOptions)
+    laughSound = pygame.mixer.Sound(laugh)
+    laughSound.play()
+
+def boomSfx():
+    boom = pygame.mixer.Sound("boom.mp3")
+    boom.play()
+
+# Button Styles
 def buttonStyle(text,command):
+    clickSfx()
     btn = Button(root, text=text,font=("Arial", 12), width=12,command=command, bg="#007AFF", fg="#000000", activebackground="#005FCC", cursor="hand2")
 
     btn.bind("<Enter>", lambda e: btn.config(bg="#005FCC"))
@@ -102,12 +133,12 @@ def displayJokeScreen():
     canvas.create_image(0, 0, image=bgImg2,anchor="nw")
 
     # Alexa Model
-    canvas.create_image(380, 50, image=figureImg,anchor="nw")
+    canvas.create_image(350, 70, image=figureImg,anchor="nw")
 
     # Buttons
-    canvas.create_window(180, 350, window=buttonStyle("Show Punchline", showPunchLine))
-    canvas.create_window(320, 350, window=buttonStyle("Next Joke", showJoke))
+    canvas.create_window(180, 350, window=buttonStyle("Next Joke",lambda:showJoke()))
     canvas.create_window(250, 420, window=buttonStyle("Exit", root.destroy))
+    canvas.create_window(320, 350, window=buttonStyle("Show Punchline",lambda:showPunchLine()))
 
 
 # This Function opens the file and gets the jokes From the txt file.
@@ -139,7 +170,8 @@ def showJoke():
     canvas.delete("setupText")
     canvas.delete("punchText")
 
-    canvas.create_text(230,100,text=currentJoke[0],font=("Arial",16,"bold"),fill="white",width=250,tags="setupText")
+    canvas.create_text(200,120,text=currentJoke[0],font=("Arial",16,"bold"),fill="white",width=250,tags="setupText")
+    boomSfx()
 
 # This Function works when the Show Punchline Button Is Pressed.
 # It checks if the Joke is available or not. If there's no joke yet, it tells the user there isn't any.
@@ -150,7 +182,8 @@ def showPunchLine():
         return
     
     canvas.delete("punchText")
-    canvas.create_text(250,200, text=currentJoke[1],font=("Arial",16),fill="white",width=200,tags="punchText")
+    canvas.create_text(250,230, text=currentJoke[1],font=("Arial",16),fill="white",width=200,tags="punchText")
+    laughSfx()
 
 # Improvements :
 # Layout can be changed in the Display Joke Screen.
