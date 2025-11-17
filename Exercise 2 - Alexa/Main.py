@@ -24,7 +24,7 @@ from PIL import Image, ImageTk # Images
 import random # Random Jokes & Random Laugh Option
 import pygame # Sound Effects
 import pyttsx3 # Text To Speech
-import threading # Fix the Threading as some audio doesn't work.
+import threading
 
 
 # Main Window Setups
@@ -51,32 +51,15 @@ bgImg2 = ImageTk.PhotoImage(bg2)
 figure = Image.open("alexa.png").resize((100,100))
 figureImg = ImageTk.PhotoImage(figure)
 
-# Initialize Python Text To Speech (pyttsx3) globally once
-tts = pyttsx3.init()
-tts.setProperty("rate", 170)
-tts.setProperty("volume", 1.0)
-
-# Use a simple lock to prevent overlapping speech
-import threading
-tts_lock = threading.Lock()
-
-def speak(text):
-    def run():
-        with tts_lock:  # Ensure only one speech at a time
-            tts.say(text)
-            tts.runAndWait()
-    threading.Thread(target=run).start()
-
 
 
 # Load Sound Effects
 # Initialize Sound Effects Volume
+pygame.mixer.init()
 bgmVol = 0.5
 sfxVol = 0.5
 
-
 # Bg Music
-pygame.mixer.init()
 pygame.mixer.music.load("elevMusic.mp3")
 pygame.mixer.music.play(-1)  # Play background music on loop
 pygame.mixer.music.set_volume(bgmVol) # Set Volume
@@ -110,9 +93,22 @@ def boomSfx():
     boom.set_volume(sfxVol)
     boom.play()
 
+# Text To speech Engine
+def speak(text):
+    def run():
+        engine = pyttsx3.init()
+        engine.setProperty("rate", 170)
+        engine.setProperty("volume", 1.0)
+        engine.say(text)
+        engine.runAndWait()
+        engine.stop()
+    threading.Thread(target=run, daemon=True).start()
+
+
 # Button Styles
 def buttonStyle(text,command):
     btn = Button(root, text=text,font=("Arial", 12), width=12,command=command, bg="#007AFF", fg="#000000", activebackground="#005FCC", cursor="hand2")
+    clickSfx()
 
     btn.bind("<Enter>", lambda e: btn.config(bg="#005FCC"))
     btn.bind("<Leave>", lambda e: btn.config(bg="#007AFF"))
@@ -151,7 +147,7 @@ def displayInstructions():
                     "3. Press 'Show Punchline to reveal it.'\n"
                     "4. Press 'Next Joke' for another.\n"
                     "5. Press 'Exit' if you had enough fun.\n"
-                    "6. ENJOY! and Try not to laugh too loud!"
+                    "6. ENJOY! and Try not to laugh too loud!\n"
                     "Change Volume Using The Sliders Below.")
     
     # Creating the Title and Text
@@ -244,10 +240,10 @@ def showPunchLine():
     root.after(1200, laughSfx)
 
 # Improvements :
-# Layout can be changed in the Display Joke Screen.
-# Music and Sfx
+# Layout can be changed in the Display Joke Screen.(Done)
+# Music and Sfx(Done)
 # Maybe an add joke Function if thats possible? So the user can add Jokes if they want in the txt file.
-# Probably Python Text To Speech(It Doesn't work that well.)
+# Probably Python Text To Speech(Fixed)
 
 # Start Program
 displayMenu()
