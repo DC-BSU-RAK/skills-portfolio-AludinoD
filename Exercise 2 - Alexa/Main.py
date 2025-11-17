@@ -10,6 +10,7 @@
 
 # Requirements : 
 # Pillow and PyGame are needed to run this. pip3 install pillow/PyGame in the terminal.
+# Python Text to Speech(pyttsx3). pip3 install pyttsx3 in the terminal.
 
 # Frame Flow
 # Menu Screen -> Start Button -> Joke Screen -> Joke Button -> Show Joke -> Next Joke -> Repeat until Exit
@@ -212,6 +213,10 @@ def displayCreateJoke():
     canvas.create_window(250, 440, window=buttonStyle("Back",lambda:displayMenu()))
 
 # Function that saves the joke in the txt file.
+# Saving new Joke Code Explanation:
+# There are 2 inputs that are needed to make this work. The setup and the punchline.
+# It gets those inputs from users, making them 2 seperate values just like how the loadJokes() function get the values.
+# Once the inputs match the requirements, it writes it in the randomJokes.txt, adding the line and saving it.
 def saveNewJoke():
     # Get the Stored Variable and Removes all Spacings.
     setup = setupEntry.get().strip()
@@ -303,11 +308,12 @@ def showPunchLine():
     speak(currentJoke[1])
     root.after(1200, laughSfx)
 
-# Improvements :
-# Layout can be changed in the Display Joke Screen.(Done)
-# Music and Sfx(Done)
-# Maybe an add joke Function if thats possible? So the user can add Jokes if they want in the txt file.(Done)
-# Probably Python Text To Speech(Fixed)
+# The Program Can be used From Start to finish. The Final Version Until Updates.
+# The App has features such as, audio, music, sound effects, and python text to speech.
+# It has 3 laughing sound options that gets randomly chosen.
+# Additionally, you can also control the music and sound effects with the help of the sliders in the instructions screen.
+# Random Jokes are also generated using the random module that gets a joke inside the randomJokes.txt file
+# It also has an added feature where the user can add their own joke in the txt file without editing it manually.
 
 # Start Program
 displayMenu()
