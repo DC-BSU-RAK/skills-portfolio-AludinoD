@@ -129,9 +129,10 @@ def displayMenu():
     # Creating the Title and Buttons
     canvas.create_text(230, 120, text="Tell Me A Joke", font=("Arial", 32, "bold"), fill="white")
     # Buttons are Horizontally Arranged
-    canvas.create_window(120, 410, window=buttonStyle("Play", lambda:displayJokeScreen()))
-    canvas.create_window(250, 410, window=buttonStyle("Instructions",lambda:displayInstructions()))
-    canvas.create_window(380, 410, window=buttonStyle("Exit",root.destroy))
+    canvas.create_window(150, 410, window=buttonStyle("Play", lambda:displayJokeScreen()))
+    canvas.create_window(150, 460, window=buttonStyle("Instructions",lambda:displayInstructions()))
+    canvas.create_window(300, 410, window=buttonStyle("Create Joke",lambda:displayCreateJoke()))
+    canvas.create_window(300, 460, window=buttonStyle("Exit",root.destroy))
 
 
 # Instruction Screen
@@ -144,7 +145,7 @@ def displayInstructions():
     instructions = ("Welcome to Alexa's Jokes!\n\n"
                     "1. Choose Play to Start.\n"
                     "2. Press 'Next Joke' to hear a joke\n"
-                    "3. Press 'Show Punchline to reveal it.'\n"
+                    "3. Press 'Show Punchline to reveal it.\n"
                     "4. Press 'Next Joke' for another.\n"
                     "5. Press 'Exit' if you had enough fun.\n"
                     "6. ENJOY! and Try not to laugh too loud!\n"
@@ -176,6 +177,69 @@ def displayInstructions():
     canvas.create_window(250, 360, window=bgmSlider)
     canvas.create_window(250, 420, window=sfxSlider)
 
+# Create Joke Screen
+def displayCreateJoke():
+    clearCanvas()
+    # Bg
+    canvas.create_image(0, 0, image=bgImg2,anchor="nw")
+
+    # Labels
+    canvas.create_text(250, 50, text="Create Your Own Joke", font=("Arial", 32, "bold"),justify="center", fill="white")
+    canvas.create_text(130, 250, text="Setup:", font=("Arial", 12, "bold"), fill="white")
+    canvas.create_text(113, 300, text="Punchline:", font=("Arial", 12, "bold"), fill="white")
+
+    # Instructions Text
+    instructions = ("How To Add Your Joke\n\n"
+                    "1. Add the Setup in the Setup Box.\n"
+                    "2. Add the Punchline in the Punchline box.\n"
+                    "3. Press Save Joke when you're Done.\n"
+                    "No Need To Add Anything Else.")
+    
+    canvas.create_text(250, 150,text=instructions,font=("Arial", 12),justify="center",width=400,fill="white")
+
+    # Store Global Variables to add in the txt file.
+    global setupEntry, punchEntry
+
+    # Entry Boxes
+    setupEntry = Entry(root, width=30, font=("Arial", 12))
+    punchEntry = Entry(root, width=30, font=("Arial", 12))
+    
+    canvas.create_window(300, 250, window=setupEntry)
+    canvas.create_window(300, 300, window=punchEntry)
+
+    # Buttons
+    canvas.create_window(250, 380, window=buttonStyle("Save Joke",lambda:saveNewJoke()))
+    canvas.create_window(250, 440, window=buttonStyle("Back",lambda:displayMenu()))
+
+# Function that saves the joke in the txt file.
+def saveNewJoke():
+    # Get the Stored Variable and Removes all Spacings.
+    setup = setupEntry.get().strip()
+    punch = punchEntry.get().strip()
+
+    # Checks If The input boxes are empty
+    if setup == "" or punch == "":
+        canvas.create_text(250, 333, text="You are not funny. Fill Both Fields.", fill="red",font=("Arial", 12, "bold"), tags="warn")
+        return
+    
+    canvas.delete("warn")
+    newLine = f"{setup}?{punch}\n"
+
+    try:
+        with open ("randomJokes.txt","a") as file:
+            file.write("\n")
+            file.write(newLine)
+        canvas.create_text(250, 333, text="Joke Saved!", fill="green",font=("Arial", 12, "bold"), tags="warn")
+
+        setupEntry.delete(0, END)
+        punchEntry.delete(0, END)
+
+        global jokes
+        jokes = loadJokes()
+
+    except:
+        canvas.create_text(250, 300, text="Error Saving Joke.", fill="lightgreen",font=("Arial", 12, "bold"), tags="warn")
+    
 
 
 # Jokes Screen
@@ -242,7 +306,7 @@ def showPunchLine():
 # Improvements :
 # Layout can be changed in the Display Joke Screen.(Done)
 # Music and Sfx(Done)
-# Maybe an add joke Function if thats possible? So the user can add Jokes if they want in the txt file.
+# Maybe an add joke Function if thats possible? So the user can add Jokes if they want in the txt file.(Done)
 # Probably Python Text To Speech(Fixed)
 
 # Start Program
