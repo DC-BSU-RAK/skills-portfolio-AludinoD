@@ -5,10 +5,11 @@
 # Notes : 
 # Some of the codes from Exercise 1 will be reused in this code(Mainly Frames, Images, Music, Sound Effects, and Maybe Layout.)
 # Same Directory Issues, so make sure all the Assets are Downloaded.(Preferably if the whole Repository was downloaded/Cloned so its easier.)
-# Requirements : 
-# Pillow and PyGame are needed to run this. pip3 install pillow/PyGame in the terminal.
 # GUI is also made in Figma so its easier to visualize.
 # Canvas will be used again.
+
+# Requirements : 
+# Pillow and PyGame are needed to run this. pip3 install pillow/PyGame in the terminal.
 
 # Frame Flow
 # Menu Screen -> Start Button -> Joke Screen -> Joke Button -> Show Joke -> Next Joke -> Repeat until Exit
@@ -20,8 +21,10 @@
 
 from tkinter import * # Main Tkinter Program
 from PIL import Image, ImageTk # Images
-import random # Random Jokes
+import random # Random Jokes & Random Laugh Option
 import pygame # Sound Effects
+import pyttsx3 # Text To Speech
+import threading # Fix the Threading as some audio doesn't work.
 
 
 # Main Window Setups
@@ -48,15 +51,41 @@ bgImg2 = ImageTk.PhotoImage(bg2)
 figure = Image.open("alexa.png").resize((100,100))
 figureImg = ImageTk.PhotoImage(figure)
 
-# Load Sound Effects
+# Initialize Python Text To Speech (pyttsx3) globally once
+tts = pyttsx3.init()
+tts.setProperty("rate", 170)
+tts.setProperty("volume", 1.0)
 
+# Use a simple lock to prevent overlapping speech
+import threading
+tts_lock = threading.Lock()
+
+def speak(text):
+    def run():
+        with tts_lock:  # Ensure only one speech at a time
+            tts.say(text)
+            tts.runAndWait()
+    threading.Thread(target=run).start()
+
+
+
+# Load Sound Effects
+# Initialize Sound Effects Volume
+bgmVol = 0.5
+sfxVol = 0.5
+
+
+# Bg Music
 pygame.mixer.init()
 pygame.mixer.music.load("elevMusic.mp3")
 pygame.mixer.music.play(-1)  # Play background music on loop
+pygame.mixer.music.set_volume(bgmVol) # Set Volume
+
 
 # Button Click SFX
 def clickSfx():
     clickSound = pygame.mixer.Sound("ClickSfx.mp3")
+    clickSound.set_volume(sfxVol)
     clickSound.play()
 
 
@@ -72,15 +101,17 @@ laughOptions = [
 def laughSfx():
     laugh = random.choice(laughOptions)
     laughSound = pygame.mixer.Sound(laugh)
+    laughSound.set_volume(sfxVol)
     laughSound.play()
 
+# Next Joke Sfx
 def boomSfx():
     boom = pygame.mixer.Sound("boom.mp3")
+    boom.set_volume(sfxVol)
     boom.play()
 
 # Button Styles
 def buttonStyle(text,command):
-    clickSfx()
     btn = Button(root, text=text,font=("Arial", 12), width=12,command=command, bg="#007AFF", fg="#000000", activebackground="#005FCC", cursor="hand2")
 
     btn.bind("<Enter>", lambda e: btn.config(bg="#005FCC"))
@@ -93,6 +124,7 @@ def clearCanvas():
     canvas.delete("all")
 
 # Display Screens (Menu, Instructions, Jokes)
+# Main Menu Screen
 def displayMenu():
     clearCanvas()
     # The bg is actually just alexa+ on the middle, but I wanted to Add The "Tell me a Joke On top"
@@ -106,27 +138,51 @@ def displayMenu():
     canvas.create_window(380, 410, window=buttonStyle("Exit",root.destroy))
 
 
-
+# Instruction Screen
 def displayInstructions():
     clearCanvas()
+    # Bg
     canvas.create_image(0, 0, image=bgImg2,anchor="nw")
 
     # Instructions Text
     instructions = ("Welcome to Alexa's Jokes!\n\n"
                     "1. Choose Play to Start.\n"
-                    "2. Press 'Tell me a Joke' to hear a joke\n"
+                    "2. Press 'Next Joke' to hear a joke\n"
                     "3. Press 'Show Punchline to reveal it.'\n"
                     "4. Press 'Next Joke' for another.\n"
                     "5. Press 'Exit' if you had enough fun.\n"
-                    "6. ENJOY! and Try not to laugh too loud!")
+                    "6. ENJOY! and Try not to laugh too loud!"
+                    "Change Volume Using The Sliders Below.")
     
     # Creating the Title and Text
-    canvas.create_text(250, 100, text="Instructions", font=("Arial", 32, "bold"), fill="white")
-    canvas.create_text(250, 200,text=instructions,font=("Arial", 12),justify="center",width=400,fill="white")
-    canvas.create_window(250, 320, window=buttonStyle("Back", lambda: displayMenu()))
+    canvas.create_text(250, 50, text="Instructions", font=("Arial", 32, "bold"), fill="white")
+    canvas.create_text(250, 150,text=instructions,font=("Arial", 12),justify="center",width=400,fill="white")
+    canvas.create_window(250, 300, window=buttonStyle("Back", lambda: displayMenu()))
+    
+    # Volume sliders Function
+    def changebgmVol(val):
+        global bgmVol
+        bgmVol = float(val)
+        pygame.mixer.music.set_volume(bgmVol)
+
+    def changesfxVol(val):
+        global sfxVol
+        sfxVol = float(val)
+
+    # Create Sliders 
+    bgmSlider = Scale(root, from_=0, to=1, resolution=0.01, orient=HORIZONTAL,length=200, label="BGM Volume", command=changebgmVol)
+    bgmSlider.set(bgmVol)
+
+    sfxSlider = Scale(root, from_=0, to=1, resolution=0.01, orient=HORIZONTAL,length=200, label="SFX Volume", command=changesfxVol)
+    sfxSlider.set(sfxVol)
+
+    # Create Sliders button
+    canvas.create_window(250, 360, window=bgmSlider)
+    canvas.create_window(250, 420, window=sfxSlider)
 
 
 
+# Jokes Screen
 def displayJokeScreen():
     clearCanvas()
     # Set Bg
@@ -137,10 +193,10 @@ def displayJokeScreen():
 
     # Buttons
     canvas.create_window(180, 350, window=buttonStyle("Next Joke",lambda:showJoke()))
-    canvas.create_window(250, 420, window=buttonStyle("Exit", root.destroy))
+    canvas.create_window(250, 420, window=buttonStyle("Return", lambda:displayMenu()))
     canvas.create_window(320, 350, window=buttonStyle("Show Punchline",lambda:showPunchLine()))
 
-
+# Tools Functions
 # This Function opens the file and gets the jokes From the txt file.
 # It gets a line and removes all spaces using the strip.
 # It then finds the "?" in the text, then splits the text after the "?" so it becomes 2 seperate values.
@@ -172,6 +228,7 @@ def showJoke():
 
     canvas.create_text(200,120,text=currentJoke[0],font=("Arial",16,"bold"),fill="white",width=250,tags="setupText")
     boomSfx()
+    root.after(700, lambda: speak(currentJoke[0]))
 
 # This Function works when the Show Punchline Button Is Pressed.
 # It checks if the Joke is available or not. If there's no joke yet, it tells the user there isn't any.
@@ -183,13 +240,14 @@ def showPunchLine():
     
     canvas.delete("punchText")
     canvas.create_text(250,230, text=currentJoke[1],font=("Arial",16),fill="white",width=200,tags="punchText")
-    laughSfx()
+    speak(currentJoke[1])
+    root.after(1200, laughSfx)
 
 # Improvements :
 # Layout can be changed in the Display Joke Screen.
 # Music and Sfx
 # Maybe an add joke Function if thats possible? So the user can add Jokes if they want in the txt file.
-# Probably Python Text To Speech
+# Probably Python Text To Speech(It Doesn't work that well.)
 
 # Start Program
 displayMenu()
