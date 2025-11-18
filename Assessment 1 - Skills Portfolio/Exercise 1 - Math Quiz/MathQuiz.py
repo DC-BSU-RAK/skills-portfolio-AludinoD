@@ -51,24 +51,30 @@ figureImg = ImageTk.PhotoImage(figure)
 
 # Load Sound Effects
 pygame.mixer.init()
+bgmVol = 0.5
+sfxVol = 0.5
 pygame.mixer.music.load("bgMusic.mp3")
 pygame.mixer.music.play(-1)  # Play background music on loop
+pygame.mixer.music.set_volume(bgmVol) # Set Volume
 
 # Sound Effects 
 # Call when Correct Answer is given.
 def correctSFX():
     correctSound = pygame.mixer.Sound("CorSfx.mp3")
+    correctSound.set_volume(sfxVol)
     correctSound.play()
 
 
 # Call when Incorrect Answer is given.
 def incSFX():
     incorrectSound = pygame.mixer.Sound("IncSfx.mp3")
+    incorrectSound.set_volume(sfxVol)
     incorrectSound.play()
 
 # Click Button Sound Effect
 def clickSfx():
     clickSound = pygame.mixer.Sound("ClickSfx.mp3")
+    clickSound.set_volume(sfxVol)
     clickSound.play()
 
 # Button Style
@@ -133,7 +139,7 @@ def displayInstructions():
     clearCanvas()
     # Set Background
     canvas.create_image(0, 0, image=bgImg, anchor="nw")
-    canvas.create_image(80, 370, image=figureImg, anchor="center")  
+    canvas.create_image(80, 320, image=figureImg, anchor="center")  
 
     # Instructions Text
     instructions = ("Welcome to Baldi's Math Quiz!\n\n"
@@ -141,12 +147,34 @@ def displayInstructions():
                     "2. Answer 10 math questions of varying difficulty.\n"
                     "3. Your score will be calculated based on correct answers.\n"
                     "4. At the end, you'll receive a grade based on your score.\n"
-                    "Good luck and have fun learning with Baldi!")
+                    "Good luck and have fun learning with Baldi!\n"
+                    "Change Volume Using The Sliders Below")
     
     # Creating the Title and Text
-    canvas.create_text(250, 100, text="Instructions", font=("Arial", 32, "bold"), fill="white")
-    canvas.create_text(250, 200,text=instructions,font=("Arial", 12),justify="center",width=400,fill="white")
-    canvas.create_window(250, 320, window=buttonStyle("Back", lambda: displayMenu()))
+    canvas.create_text(250, 50, text="Instructions", font=("Arial", 32, "bold"), fill="white")
+    canvas.create_text(250, 150,text=instructions,font=("Arial", 12),justify="center",width=400,fill="white")
+    canvas.create_window(250, 300, window=buttonStyle("Back", lambda: displayMenu()))
+
+        # Volume sliders Function
+    def changebgmVol(val):
+        global bgmVol
+        bgmVol = float(val)
+        pygame.mixer.music.set_volume(bgmVol)
+
+    def changesfxVol(val):
+        global sfxVol
+        sfxVol = float(val)
+
+    # Create Sliders 
+    bgmSlider = Scale(root, from_=0, to=1, resolution=0.01, orient=HORIZONTAL,length=200, label="BGM Volume", command=changebgmVol)
+    bgmSlider.set(bgmVol)
+
+    sfxSlider = Scale(root, from_=0, to=1, resolution=0.01, orient=HORIZONTAL,length=200, label="SFX Volume", command=changesfxVol)
+    sfxSlider.set(sfxVol)
+
+    # Create Sliders button
+    canvas.create_window(250, 360, window=bgmSlider)
+    canvas.create_window(250, 420, window=sfxSlider)
 
 # Difficulty Screen
 def displayDifficulty():
