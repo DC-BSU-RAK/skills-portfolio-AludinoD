@@ -114,7 +114,7 @@ def createTree():
     canvas.create_window(580,290,window=tree)
 
 
-# Function for Adding Data into the Tree
+# Function for Adding Data into the Tree(Excel)
 def loadIntoTree(data):
     tree.delete(*tree.get_children())
     for s in data:
@@ -125,7 +125,7 @@ def loadIntoTree(data):
 
 
 
-# Screens
+# Main Menu Screen
 def displayMenu():
     clearCanvas()
     # Bg
@@ -146,19 +146,42 @@ def displayMenu():
 
 
 # Functions
+# Load all Student Data
 def allStudent():
     data = loadMarks()
     loadIntoTree(data)
 
+# Load Only 1 Student that the user is looking for, by using either ID or Name.
 def studentRecord():
-    pass
+    # Search Box that stores the user input. Stores the Name or ID
+    search = simpledialog.askstring("Search", "Enter ID or Name:")
+    # If the user didn't type anything, the tab just closes.
+    if not search:
+        return
+    # Case Sensitive
+    search = search.casefold()
+
+    # Loads the Data and checks if the student name or ID exists in the List. Value 0(1) for ID and 1(2) for Name.
+    data = loadMarks()
+    matches = [s for s in data if search in s[0].casefold() or search in s[1].casefold()]
+
+    # Checks if the user input matches the student in the list.
+    # If not found, display info.
+    if not matches:
+        messagebox.showinfo("Not Found", "Student Not Found.")
+        return
+    
+    # Adds data to the tree.
+    loadIntoTree(matches)
 
 # With The use of min and max values of python, I can easily show the highest and lowest marks by going through the data percentages and choosing the highest/lowest values.
+# Highest Marks
 def highestMark():
     data = loadMarks()
     highest = max(data,key=lambda s:convertPercent(s))
     loadIntoTree([highest])
 
+# Lowest Marks
 def lowestMark():
     data = loadMarks()
     lowest = min(data,key=lambda s:convertPercent(s))
