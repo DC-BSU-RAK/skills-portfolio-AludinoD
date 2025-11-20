@@ -188,7 +188,19 @@ def lowestMark():
     loadIntoTree([lowest])
 
 def sortStudent():
-    pass
+    sort = simpledialog.askstring("Sort Students", "1 = Ascending \n2 = Descending")
+    if not sort:
+        return
+    
+    data = loadMarks()
+    if sort == "1":
+        data.sort(key=lambda s: convertPercent(s))
+    elif sort =="2":
+        data.sort(key=lambda s: convertPercent(s), reverse=True)
+    else:
+        messagebox.showinfo("Invalid Input", "Choose 1 or 2.")
+
+    loadIntoTree(data)
 
 def addRecord():
     pass
