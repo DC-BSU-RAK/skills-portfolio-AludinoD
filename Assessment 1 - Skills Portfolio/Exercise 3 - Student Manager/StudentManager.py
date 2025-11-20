@@ -66,6 +66,12 @@ def loadMarks():
 
     return students
 
+def saveMarks(students):
+    with open ("studentsMarks.txt","w") as f:
+        f.write(str(len(students)) + "\n")
+        for s in students:
+            f.write(f"{s[0]},{s[1]},{s[2]},{s[3]},{s[4]},{s[5]}\n")
+
 # Grade Computation
 # Since there are 3 course works and 1 exam, the values are extracted from the loadMarks() Function. Then those values gets run into this code to produce the average grade.
 # This function checks the student's record from 3 of their course works, adding them all to get the average.
@@ -188,13 +194,17 @@ def lowestMark():
     loadIntoTree([lowest])
 
 def sortStudent():
+    # Same logic with looking for a student, it stores the user answer, either 1 or 2. If not then it tells them only 1 and 2 are allowed.
     sort = simpledialog.askstring("Sort Students", "1 = Ascending \n2 = Descending")
     if not sort:
         return
     
+    # Checks user input if its 1, show all the data in Ascending Order
     data = loadMarks()
     if sort == "1":
         data.sort(key=lambda s: convertPercent(s))
+    
+    # If its 2 then we reverse the list.
     elif sort =="2":
         data.sort(key=lambda s: convertPercent(s), reverse=True)
     else:
@@ -202,8 +212,33 @@ def sortStudent():
 
     loadIntoTree(data)
 
+# Adding More Student Record Function
 def addRecord():
-    pass
+    # Store Student Name
+    name = simpledialog.askstring("Add Student", "Name:")
+    if not name:
+        return
+    # T = Test
+    # Gets Values from the 3 tests and exams the student has. It then computes the grade for the student using the coursework(), convertPercent(), and Grade() functions
+    try:
+        t1 = int(simpledialog.askstring("Test 1", "Test 1 Score 0-20:"))
+        t2 = int(simpledialog.askstring("Test 2", "Test 2 Score 0-20:"))
+        t3 = int(simpledialog.askstring("Test 3", "Test 3 Score 0-20:"))
+        exam = int(simpledialog.askstring("Exam", "Exam Score 0-100:"))
+    except:
+        # If the values aren't integers
+        messagebox.showerror("Invalid Input", "Marks should only be numbers.")
+        return
+    
+    data = loadMarks()
+    # Create a new ID 
+    newID = str(max(int(s[0]) for s in data) + 1)
+    
+    # Adds the new Data to the tree using the saveMarks() function
+    data.append([newID,name,t1,t2,t3,exam])
+    saveMarks(data)
+    loadIntoTree(data)
+
 
 def deleteRecord():
     pass
