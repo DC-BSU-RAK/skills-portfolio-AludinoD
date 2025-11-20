@@ -135,7 +135,7 @@ def displayMenu():
     canvas.create_text(450, 45, text="Student Manager", font=("Arial", 32, "bold"), fill="white")
     createTree()
     # Buttons
-    canvas.create_window(150, 120, window=buttonStyle("View All Student Record", allStudent()))
+    canvas.create_window(150, 120, window=buttonStyle("View All Student Record",lambda:allStudent()))
     canvas.create_window(150, 170, window=buttonStyle("View A Student Record",lambda:studentRecord()))
     canvas.create_window(150, 220, window=buttonStyle("Show Highest Mark",lambda:highestMark()))
     canvas.create_window(150, 270, window=buttonStyle("Show Lowest Mark",lambda:lowestMark()))
@@ -153,11 +153,16 @@ def allStudent():
 def studentRecord():
     pass
 
+# With The use of min and max values of python, I can easily show the highest and lowest marks by going through the data percentages and choosing the highest/lowest values.
 def highestMark():
-    pass
+    data = loadMarks()
+    highest = max(data,key=lambda s:convertPercent(s))
+    loadIntoTree([highest])
 
 def lowestMark():
-    pass
+    data = loadMarks()
+    lowest = min(data,key=lambda s:convertPercent(s))
+    loadIntoTree([lowest])
 
 def sortStudent():
     pass
