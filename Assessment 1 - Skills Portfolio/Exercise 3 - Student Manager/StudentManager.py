@@ -4,8 +4,10 @@
 # By : Deniz Marc Andrei Aludino
 # Notes : 
 # Codes from previous exercises will be used here again. Especially the one in the Alexa because of the file handling.
+# I Added A Tree View, its like an excel grid that I found out that I can use in Tkinter.
 
 from tkinter import * # Main Tkinter Program
+from tkinter import ttk,messagebox,simpledialog
 from PIL import Image, ImageTk # Images
 
 
@@ -27,15 +29,101 @@ bgImg = ImageTk.PhotoImage(Bsubg)
 
 # Button Style
 def buttonStyle(text,command):
-    btn = Button(root, text=text,font=("Arial", 12), width=20,command=command, bg="#23314F", fg="#FFFFFF", activebackground="#005FCC", cursor="hand2")
-
+    btn = Button(root, text=text,font=("Arial", 12), width=20,command=command, bg="#23314F", fg="#FFFFFF", activebackground="#195598", cursor="hand2")
 
     btn.bind("<Enter>", lambda e: btn.config(bg="#195598"))
     btn.bind("<Leave>", lambda e: btn.config(bg="#23314F"))
     return btn
 
+# Tools
 def clearCanvas():
     canvas.delete("all")
+
+# Function for Opening and Analyzing the file.
+def loadMarks():
+    # Opens the File and ensures that there aren't any spaces or anything that can mess up the data.
+    try:
+        with open ("studentMarks.txt","r") as f:
+            lines = f.read().strip().split("\n")
+    # Tells if the File can't be found.
+    except FileNotFoundError:
+        print("File Not Found.")
+        return[]
+    
+    # Ignores the first Line because for some reason theres a 10 there.
+    lines = lines[1:]
+
+    # Creates an empty students list that splits the parts into different variables
+    # id,name,test1,test2,test3, and exam.
+    students = []
+    for line in lines:
+        parts = [p.strip() for p in line.split(",")]
+        if len(parts) < 6:
+            continue
+        id_,name,t1,t2,t3,exam = parts
+        t1,t2,t3,exam = int(t1),int(t2),int(t3),int(exam)
+        students.append([id_,name,t1,t2,t3,exam])
+
+    return students
+
+# Grade Computation
+# Since there are 3 course works and 1 exam, the values are extracted from the loadMarks() Function. Then those values gets run into this code to produce the average grade.
+# This function checks the student's record from 3 of their course works, adding them all to get the average.
+def coursework(s):
+    return s[2] + s[3] + s[4]
+
+# This function converts the course work grades into percentage that will be have its values later.
+# Total Course work + exam = 160
+#  Total / 160 * 100 to get the percentage then the 2 is for the decimal places.
+def convertPercent(s):
+    return round((coursework(s) + s[5]) / 160 * 100, 2)
+
+# Gets grade and checks the Letter Grade
+def grade(percentage):
+    if percentage >=70:
+        return "A"
+    if percentage >=60:
+        return "B"
+    if percentage >=50:
+        return "C"
+    if percentage >=40:
+        return "D"
+    return "F"
+
+# Tree View(Like an Excel Sheet on the right side)
+def createTree():
+    global tree
+    tree = ttk.Treeview(root,columns =("id","name","courses","exam","percentage","grades"),show="headings",height=15)
+
+    # Headers
+    tree.heading("id", text="ID")
+    tree.heading("name", text="Name")
+    tree.heading("courses", text="Coursework")
+    tree.heading("exam", text="Exam")
+    tree.heading("percentage", text="Overall %")
+    tree.heading("grades", text="Grade")
+
+    # Columns
+    tree.column("id", width=70)
+    tree.column("name", width=180)
+    tree.column("courses", width=100)
+    tree.column("exam", width=70)
+    tree.column("percentage", width=80)
+    tree.column("grades", width=60)
+
+    canvas.create_window(580,290,window=tree)
+
+
+# Function for Adding Data into the Tree
+def loadIntoTree(data):
+    tree.delete(*tree.get_children())
+    for s in data:
+        courses = coursework(s)
+        percentage = convertPercent(s)
+        grades = grade(percentage)
+        tree.insert("", END, values=(s[0], s[1], f"{courses}/60", s[5], percentage, grades))
+
+
 
 # Screens
 def displayMenu():
@@ -45,19 +133,22 @@ def displayMenu():
 
     #Title
     canvas.create_text(450, 45, text="Student Manager", font=("Arial", 32, "bold"), fill="white")
+    createTree()
     # Buttons
-    canvas.create_window(150, 150, window=buttonStyle("View All Student Record",lambda:allStudent()))
-    canvas.create_window(450, 150, window=buttonStyle("View A Student Record",lambda:studentRecord()))
-    canvas.create_window(750, 150, window=buttonStyle("Show Highest Mark",lambda:highestMark()))
-    canvas.create_window(150, 250, window=buttonStyle("Show Lowest Mark",lambda:lowestMark()))
-    canvas.create_window(450, 250, window=buttonStyle("Sort Student Record",lambda:sortStudent()))
-    canvas.create_window(750, 250, window=buttonStyle("Add Student Record",lambda:addRecord()))
-    canvas.create_window(300, 350, window=buttonStyle("Delete Student Record",lambda:deleteRecord()))
-    canvas.create_window(600, 350, window=buttonStyle("Update Student Record",lambda:updateRecord()))
+    canvas.create_window(150, 120, window=buttonStyle("View All Student Record", allStudent()))
+    canvas.create_window(150, 170, window=buttonStyle("View A Student Record",lambda:studentRecord()))
+    canvas.create_window(150, 220, window=buttonStyle("Show Highest Mark",lambda:highestMark()))
+    canvas.create_window(150, 270, window=buttonStyle("Show Lowest Mark",lambda:lowestMark()))
+    canvas.create_window(150, 320, window=buttonStyle("Sort Student Record",lambda:sortStudent()))
+    canvas.create_window(150, 370, window=buttonStyle("Add Student Record",lambda:addRecord()))
+    canvas.create_window(150, 420, window=buttonStyle("Delete Student Record",lambda:deleteRecord()))
+    canvas.create_window(150, 470, window=buttonStyle("Update Student Record",lambda:updateRecord()))
+
 
 # Functions
 def allStudent():
-    pass
+    data = loadMarks()
+    loadIntoTree(data)
 
 def studentRecord():
     pass
