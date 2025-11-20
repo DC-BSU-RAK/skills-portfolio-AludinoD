@@ -67,6 +67,7 @@ def loadMarks():
     return students
 
 def saveMarks(students):
+    # Access the txt file and write the student's informations in the file.
     with open ("studentsMarks.txt","w") as f:
         f.write(str(len(students)) + "\n")
         for s in students:
@@ -237,11 +238,30 @@ def addRecord():
     # Adds the new Data to the tree using the saveMarks() function
     data.append([newID,name,t1,t2,t3,exam])
     saveMarks(data)
+    messagebox.showinfo("Student Added","Student Record Added Successfully.")
     loadIntoTree(data)
 
-
+# Delete Student Record
 def deleteRecord():
-    pass
+    # Store student name or ID
+    delete = simpledialog.askstring("Delete Student", "Enter ID or Name:")
+    if not delete:
+        return
+    delete = delete.casefold()
+    
+    # Check if student is in the list.
+    data = loadMarks()
+    new = [s for s in data if delete not in s[0].casefold() and delete not in s[1].casefold()]
+
+    # If student not found in list, tell user.
+    if len(new) == len(data):
+        messagebox.showinfo("Student Not Found", "No Matching Student.")
+        return
+    
+    saveMarks(new)
+    messagebox.showinfo("Student Deleted","Student Record Deleted Successfully.")
+    loadIntoTree(new)
+
 
 def updateRecord():
     pass
