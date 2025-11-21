@@ -42,8 +42,9 @@ def buttonStyle(text,command):
     return btn
 # Music and Sound Effects
 pygame.mixer.init()
-bgmVol = 0.5
-sfxVol = 0.5
+# Initialize 30% of the volume, no need to add volume scrollers because the audio isnt that loud.
+bgmVol = 0.3
+sfxVol = 0.3
 
 
 pygame.mixer.music.load("studentBg.mp3")
@@ -389,3 +390,17 @@ def updateRecord():
 # Start Program
 displayMenu()
 root.mainloop()
+
+# This is the final version of the program until further updates.
+# This program has all the basic requirements and the Extension ones.
+# It Shows all the data using the tree view, which is like an excel sheet so its easier to comprehend.
+# Features:
+# View All student Records with Grade and Information
+# View Only 1 Student Record
+# Show Overall Highest and Lowest Marks
+# Sort Student Records
+# Add New Student Record automatically without going to the txt file.
+# Delete Student Record
+# Update Student Record
+# It also has input validations(On Scores) and try and except for invalid Inputs.
+# The txt file attached is the original file from the github repo.
