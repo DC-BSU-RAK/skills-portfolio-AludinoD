@@ -7,8 +7,9 @@
 # I Added A Tree View, its like an excel grid that I found out that I can use in Tkinter.
 
 from tkinter import * # Main Tkinter Program
-from tkinter import ttk,messagebox,simpledialog
+from tkinter import ttk,messagebox,simpledialog # Message Box and User Inputs
 from PIL import Image, ImageTk # Images
+import pygame # Sound Effects
 
 
 # Main Window Setups
@@ -29,11 +30,31 @@ bgImg = ImageTk.PhotoImage(Bsubg)
 
 # Button Style
 def buttonStyle(text,command):
-    btn = Button(root, text=text,font=("Arial", 12), width=20,command=command, bg="#23314F", fg="#FFFFFF", activebackground="#195598", cursor="hand2")
+    # Play Click Sound Effect
+    def playClick():
+        clickSfx()
+        command()
+
+    btn = Button(root, text=text,font=("Arial", 12), width=20,command=playClick, bg="#23314F", fg="#FFFFFF", activebackground="#195598", cursor="hand2")
 
     btn.bind("<Enter>", lambda e: btn.config(bg="#195598"))
     btn.bind("<Leave>", lambda e: btn.config(bg="#23314F"))
     return btn
+# Music and Sound Effects
+pygame.mixer.init()
+bgmVol = 0.5
+sfxVol = 0.5
+
+
+pygame.mixer.music.load("studentBg.mp3")
+pygame.mixer.music.play(-1)  # Play background music on loop
+pygame.mixer.music.set_volume(bgmVol) # Set Volume
+
+
+def clickSfx():
+    clickSound = pygame.mixer.Sound("ClickSfx.mp3")
+    clickSound.set_volume(sfxVol)
+    clickSound.play()
 
 # Tools
 def clearCanvas():
@@ -250,6 +271,7 @@ def addRecord():
             except ValueError:
                 messagebox.showerror("Invalid Input", "Please enter a Valid Whole Number.")
                 continue
+
             # Check if the input is a negative number
             if value < 0:
                 messagebox.showerror("Invalid Input", "Score can't be Negative.")
@@ -364,6 +386,6 @@ def updateRecord():
     loadIntoTree(data)
     
     
-
+# Start Program
 displayMenu()
 root.mainloop()
