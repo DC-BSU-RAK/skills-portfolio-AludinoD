@@ -1,0 +1,16 @@
+All of the codes are reused from each exercise, this means the modules used are the same.
+These Modules are needed to run the programs.
+
+Requirements:
+Pygame
+Pillow
+Python Text To Speech(pyttsx3)
+
+Directory Issues:
+All the assets are outside for a reason.
+Python doesn't find the file if they're in the same folder, so I had to resort to moving them all outside, and for some reason it works.
+The assets would be compiled all together if the Directories work as they should.
+
+Notes: 
+Progress of the codes can be seen from the commits as I cloned the Github Classroom Repository to my local system.
+This means that I regularly push code when I make progress through each Exercise.
