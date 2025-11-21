@@ -105,6 +105,17 @@ def grade(percentage):
 def createTree():
     global tree
     tree = ttk.Treeview(root,columns =("id","name","courses","exam","percentage","grades"),show="headings",height=15)
+    # Hover Effect
+    tree.tag_configure('highlight', background='lightblue')
+    def hightlightRow(event):
+        tree = event.widget
+        item = tree.identify_row(event.y)
+        # Clear previous highlighting
+        tree.tk.call(tree, "tag", "remove", "highlight") 
+        # Apply highlight to the current row
+        tree.tk.call(tree, "tag", "add", "highlight", item)
+        
+    tree.bind("<Motion>", hightlightRow)
 
     # Headers
     tree.heading("id", text="ID")
