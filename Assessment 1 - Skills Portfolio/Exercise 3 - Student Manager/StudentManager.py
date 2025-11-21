@@ -50,7 +50,6 @@ def loadMarks():
         print("File Not Found.")
         return[]
     
-    # Ignores the first Line because for some reason theres a 10 there.
     lines = lines[1:]
 
     # Creates an empty students list that splits the parts into different variables
@@ -66,10 +65,15 @@ def loadMarks():
 
     return students
 
+# Function for overwriting records, wether deleting it or adding, or updating.
 def saveMarks(students):
     # Access the txt file and write the student's informations in the file.
-    with open ("studentsMarks.txt","w") as f:
+    # open the file and write using w.
+    # Then adds the another student from the number count(10), then writes the the new text.
+    with open ("studentMarks.txt","w") as f:
         f.write(str(len(students)) + "\n")
+        # Write the data in the same format as the other students in the txt file
+        # s[0] ID ,s[1] Name ,s[2] Test 1 ,s[3] Test 2 ,s[4] Test 3 ,s[5] exam.
         for s in students:
             f.write(f"{s[0]},{s[1]},{s[2]},{s[3]},{s[4]},{s[5]}\n")
 
@@ -140,6 +144,7 @@ def displayMenu():
 
     #Title
     canvas.create_text(450, 45, text="Student Manager", font=("Arial", 32, "bold"), fill="white")
+    # Create Excel
     createTree()
     # Buttons
     canvas.create_window(150, 120, window=buttonStyle("View All Student Record",lambda:allStudent()))
@@ -194,6 +199,7 @@ def lowestMark():
     lowest = min(data,key=lambda s:convertPercent(s))
     loadIntoTree([lowest])
 
+# Function for Sorting Students Grade
 def sortStudent():
     # Same logic with looking for a student, it stores the user answer, either 1 or 2. If not then it tells them only 1 and 2 are allowed.
     sort = simpledialog.askstring("Sort Students", "1 = Ascending \n2 = Descending")
@@ -258,13 +264,49 @@ def deleteRecord():
         messagebox.showinfo("Student Not Found", "No Matching Student.")
         return
     
+    # Store the new(Deleted) marks into the txt File
     saveMarks(new)
     messagebox.showinfo("Student Deleted","Student Record Deleted Successfully.")
     loadIntoTree(new)
 
 
 def updateRecord():
-    pass
+    # Store the ID or the Name the user wants to update.
+    update = simpledialog.askstring("Update Student Record","Enter ID or Name:")
+    if not update:
+        return
+    update = update.casefold()
+
+    data = loadMarks()
+    matches = [s for s in data if update in s[0].casefold() or update in s[1].casefold()]
+
+    # Checks if the user input matches the student in the list.
+    # If not found, display info.
+    if not matches:
+        messagebox.showinfo("Not Found", "Student Not Found.")
+        return
+    
+    # Select the first match
+    s = matches[0]
+    # Update Student Name
+    newName = simpledialog.askstring("Student Name",f"New Name({s[1]}):")
+    if newName: 
+        s[1] = newName
+
+    for i, label in zip([2,3,4,5],["Test 1","Test 2","Test 3","Exam"]):
+        score = simpledialog.askstring(label, f"{label} ({s[i]}):")
+        # Convert Score Into Integers
+        if score:
+            try:
+                s[i] = int(score)
+            except:
+                pass
+    
+    # Save new marks and display into the tree.
+    saveMarks(data)
+    loadIntoTree(data)
+    
+    
 
 displayMenu()
 root.mainloop()
