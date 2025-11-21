@@ -6,6 +6,20 @@
 # Codes from previous exercises will be used here again. Especially the one in the Alexa because of the file handling.
 # I Added A Tree View, its like an excel grid that I found out that I can use in Tkinter.
 
+# Requirements : 
+# Pillow and PyGame are needed to run this. pip3 install pillow/PyGame in the terminal.
+
+# Buttons Flow
+# View All Student -> LoadMarks -> Show all in Tree view
+# View One Student -> LoadMarks -> Find Student -> Show Info In tree view
+# Show Highest Mark -> LoadMarks -> Max value -> Show Max Info in tree view
+# Show Lowest Mark -> LoadMarks -> Min value -> Show Min Info in tree view
+# Sort Student -> LoadMarks -> Ascending -> Check Grade -> Show Info in tree view, starting from F to A
+# Sort Student -> LoadMarks -> Descending -> Check Grade -> Show Info in tree view, starting from A to F
+# Add New Student -> LoadMarks -> Access txt file -> Get Info(Validate) -> SaveMarks into the txt file
+# Delete Student -> LoadMarks -> Access txt file -> Find Student -> Remove record in txt file.
+# Update Student -> LoadMarks -> Access txt file -> Find Student -> Overwrite record by getting info(validated) -> SaveMarks into the txt file
+
 from tkinter import * # Main Tkinter Program
 from tkinter import ttk,messagebox,simpledialog # Message Box and User Inputs
 from PIL import Image, ImageTk # Images
