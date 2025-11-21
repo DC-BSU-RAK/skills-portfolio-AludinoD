@@ -236,20 +236,47 @@ def addRecord():
     name = simpledialog.askstring("Add Student", "Name:")
     if not name:
         return
+    
+    # Function to get score with validation.
+    def getScore(label,maxVal):
+        while True:
+            # Check if score is empty
+            score = simpledialog.askstring(label, f"{label} (0-{maxVal}):")
+            if score is None or score.strip() == "":
+                return
+            # Check if the input is an integer
+            try:
+                value = int(score)
+            except ValueError:
+                messagebox.showerror("Invalid Input", "Please enter a Valid Whole Number.")
+                continue
+            # Check if the input is a negative number
+            if value < 0:
+                messagebox.showerror("Invalid Input", "Score can't be Negative.")
+                continue
+            # Check if the input is higher than the given max score
+            if value > maxVal:
+                messagebox.showerror("Invalid Score", f"{label} can't be above {maxVal}")
+                continue
+
+            return value
     # T = Test
     # Gets Values from the 3 tests and exams the student has. It then computes the grade for the student using the coursework(), convertPercent(), and Grade() functions
-    try:
-        t1 = int(simpledialog.askstring("Test 1", "Test 1 Score 0-20:"))
-        t2 = int(simpledialog.askstring("Test 2", "Test 2 Score 0-20:"))
-        t3 = int(simpledialog.askstring("Test 3", "Test 3 Score 0-20:"))
-        exam = int(simpledialog.askstring("Exam", "Exam Score 0-100:"))
-    except:
-        # If the values aren't integers
-        messagebox.showerror("Invalid Input", "Marks should only be numbers.")
+    t1 = getScore("Test 1",20)
+    if t1 is None:
         return
-    
+    t2 = getScore("Test 2",20)
+    if t2 is None:
+        return
+    t3 = getScore("Test 3",20)
+    if t3 is None:
+        return
+    exam = getScore("Exam",100)
+    if exam is None:
+        return
+
     data = loadMarks()
-    # Create a new ID 
+    # Create a new ID based on the total amount of students there then + 1
     newID = str(max(int(s[0]) for s in data) + 1)
     
     # Adds the new Data to the tree using the saveMarks() function
@@ -304,14 +331,33 @@ def updateRecord():
     if newName: 
         s[1] = newName
 
-    for i, label in zip([2,3,4,5],["Test 1","Test 2","Test 3","Exam"]):
-        score = simpledialog.askstring(label, f"{label} ({s[i]}):")
-        # Convert Score Into Integers
-        if score:
+    # Set Max Scores for each Test and Exam
+    maxScores = [("Test 1",20),("Test 2",20),("Test 3",20),("Exam",100)]
+    for i, (label,maxVal) in zip([2,3,4,5],maxScores):
+
+        # Create a while loop that will ask values again and again till the condition is met.
+        while True:
+            score = simpledialog.askstring(label,f"{label}({s[i]}):")
+            if score is None or score.strip() =="":
+                break
+
+            # Check if the input is an integer
             try:
-                s[i] = int(score)
-            except:
-                pass
+                value = int(score)
+            except ValueError:
+                messagebox.showerror("Invalid Input", "Please enter a Valid Whole Number.")
+                continue
+            # Check if the input is a negative number
+            if value < 0:
+                messagebox.showerror("Invalid Input", "Score can't be Negative.")
+                continue
+            # Check if the input is higher than the given max score
+            if value > maxVal:
+                messagebox.showerror("Invalid Score", f"{label} can't be above {maxVal}")
+                continue
+            # Save New Info if all conditions are met.
+            s[i] = value
+            break
     
     # Save new marks and display into the tree.
     saveMarks(data)
