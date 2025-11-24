@@ -122,6 +122,7 @@ def clearCanvas():
 # Main Menu Screen 
 def displayMenu():
     clearCanvas()
+    root.unbind('<Return>')
     # Set Background
     canvas.create_image(0, 0, image=bgImg, anchor="nw")
     
@@ -136,6 +137,7 @@ def displayMenu():
 
 # Instructions Screen
 def displayInstructions():
+    root.unbind('<Return>')
     clearCanvas()
     # Set Background
     canvas.create_image(0, 0, image=bgImg, anchor="nw")
@@ -178,6 +180,7 @@ def displayInstructions():
 
 # Difficulty Screen
 def displayDifficulty():
+    root.unbind('<Return>')
     global userNameEntry
     clearCanvas()
     # Set Background
@@ -240,6 +243,7 @@ def startQuiz(selectedDifficulty):
 
 # Displays the Math Questions on the screen, along with the question number, score, input box, and buttons.
 def displayProblem():
+    root.unbind('<Return>')
     global num1, num2, operator, answer,score # Access global variables for the operation and problems.
     clearCanvas()
     canvas.create_image(0, 0, image=bgImg, anchor="nw")
@@ -323,9 +327,9 @@ def checkAnswer(user_input):
         displayResults()
     else:
         displayProblem()
-
 # Results Screen
 def displayResults():
+    root.unbind('<Return>')
     global userName # Grabs the userName so the program can call it.
     clearCanvas()
     # Set Background
