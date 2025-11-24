@@ -60,12 +60,12 @@ pygame.mixer.init()
 bgmVol = 0.3
 sfxVol = 0.3
 
-
+# Load Bg Music
 pygame.mixer.music.load("studentBg.mp3")
 pygame.mixer.music.play(-1)  # Play background music on loop
 pygame.mixer.music.set_volume(bgmVol) # Set Volume
 
-
+# Click Sfx
 def clickSfx():
     clickSound = pygame.mixer.Sound("ClickSfx.mp3")
     clickSound.set_volume(sfxVol)
