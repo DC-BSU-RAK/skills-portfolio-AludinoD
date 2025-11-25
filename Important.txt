@@ -16,12 +16,11 @@ Notes:
 Progress of the codes can be seen from the commits as I cloned the Github Classroom Repository to my local system.
 This means that I regularly push code when I make progress through each Exercise.
 Canvas was regularly used as the main frame for the programs to run.
-Additionally, the rough layouts were first made in Figma for visualization
+Additionally, the rough layouts were first made in Figma for visualization.
+Programs that has input has basic input validation that asks the user to redo the input or close the tab automatically(depending on the needed information.)
 
 There are music and sound effects for each exercise, some reusing the same sfx(such as the click sound).
 Each part of the code is made with functions, as they can easily get called every time.
 
-Youtube Links(For App Walkthrough):
-Math Quiz - 
-Alexa Tell Me A Joke - 
-Student Manager - 
+Youtube Link(For App Walkthrough):
+https://youtu.be/V7QW_L1S4cI
