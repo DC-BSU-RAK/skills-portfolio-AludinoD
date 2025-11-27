@@ -38,6 +38,7 @@ root.iconbitmap("icon.ico")  # Changed Window Icon
 # I couldn't manipulate the background color because my background image wasn't a solid color.
 canvas = Canvas(root, width=500, height=500, highlightthickness=0)
 canvas.pack(fill="both", expand=True)
+root.resizable(False, False)
 
 # Load Images
 

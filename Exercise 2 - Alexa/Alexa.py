@@ -36,6 +36,7 @@ root.iconbitmap("alexaLogo.ico")  # Changed Window Icon
 
 canvas = Canvas(root, width=500, height=500, highlightthickness=0)
 canvas.pack(fill="both", expand=True)
+root.resizable(False, False)
 
 # Load Images
 
